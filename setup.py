@@ -2,14 +2,14 @@ import setuptools
 
 setuptools.setup(
     name='z3-tracker',
-    version='0.9.2',
+    version='0.9.4',
     author='Feneg',
     description='Helper program for Link to the Past randomiser',
     url='https://www.github.com/feneg/z3-tracker',
     packages=setuptools.find_packages(),
     include_package_data=True,
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.6',
         'Topic :: Games/Entertainment',

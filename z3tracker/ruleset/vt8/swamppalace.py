@@ -27,7 +27,9 @@ LOCATIONS = {
         'type': 'area', 'dungeon': 'Swamp Palace',
         'link': {
             'Swamp Palace Entrance (I)': [],
-            'Swamp Palace Canal': [('access', 'Water Drain')]}
+            'Swamp Palace Canal': [('and', [
+                ('access', 'Water Drain'),
+                ('or', [('settings', 'entrance'), ('item', 'mirror')])])]}
     },
     'Swamp Palace Canal': {
         'type': 'area', 'dungeon': 'Swamp Palace After Canal',
