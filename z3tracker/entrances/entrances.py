@@ -112,7 +112,7 @@ class EntranceTracker(dict):
             loc = reachable.pop(0)
             done.add(loc)
             for link in self.worldtracker.ruleset[loc].link:
-                if link ('Ocarina', 'Pyramid', 'Castle Walls'):
+                if link in ('Ocarina', 'Pyramid', 'Castle Walls'):
                     continue
                 if not self.worldtracker.ruleset[link].type.startswith(
                         'entrance') and link not in done:
