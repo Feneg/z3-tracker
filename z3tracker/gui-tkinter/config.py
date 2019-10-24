@@ -15,6 +15,7 @@ from . import misc
 
 SPACERWIDTH = -5
 PADDING = 3
+FONT = ('Arial', CONFIG['font_size'])
 
 __all__ = 'start',
 
@@ -42,6 +43,8 @@ class ConfigWindow(tk.Toplevel):
         self.frame = ttk.Frame(self, padding=PADDING)
         self.frame.grid(column=0, row=0, sticky=misc.A)
 
+        self.option_add('*TCombobox*Listbox.font', FONT)
+
         self.tracker = tracker
 
         self.widgets = []
@@ -59,8 +62,9 @@ class ConfigWindow(tk.Toplevel):
         sec.grid(column=0, row=0, sticky=tk.E+tk.W)
         self.widgets.append(sec)
 
-        self._make_entry(0, sec, 'Item/Dungeon tracker size', 'icon_size')
-        self._make_entry(1, sec, 'Maps size', 'map_size')
+        self._make_entry(0, sec, 'Font size', 'font_size')
+        self._make_entry(1, sec, 'Item/Dungeon tracker size', 'icon_size')
+        self._make_entry(2, sec, 'Maps size', 'map_size')
 
         sec = ttk.LabelFrame(
             col, padding=PADDING, text='File information')
@@ -136,7 +140,7 @@ class ConfigWindow(tk.Toplevel):
         spacer.grid(column=1, row=location, sticky=tk.W)
         entryvar = tk.StringVar()
         entryvar.set(str(CONFIG[configoption]))
-        entry = ttk.Entry(parent, textvariable=entryvar)
+        entry = ttk.Entry(parent, font=FONT, textvariable=entryvar)
         entry.grid(column=2, row=location, sticky=tk.W)
         self.entries[configoption] = entryvar
         self.texts[configoption] = displaytext
@@ -161,7 +165,7 @@ class ConfigWindow(tk.Toplevel):
         spacer.grid(column=1, row=location, sticky=tk.W)
         entryvar = tk.StringVar()
         entryvar.set(str(CONFIG[configoption]))
-        entry = ttk.Entry(parent, textvariable=entryvar)
+        entry = ttk.Entry(parent, font=FONT, textvariable=entryvar)
         entry.configure(state='readonly')
         entry.grid(column=2, row=location, sticky=tk.W)
         self.widgets.extend((name, spacer, entryvar, entry))
@@ -211,8 +215,9 @@ class ConfigWindow(tk.Toplevel):
         spacer.grid(column=1, row=location, sticky=tk.W)
         entryvar = tk.StringVar()
         entryvar.set(str(CONFIG[configoption]))
-        entry = ttk.Combobox(parent, values=choices, textvariable=entryvar,
-                             width=max(len(s) for s in choices))
+        entry = ttk.Combobox(
+            parent, font=FONT, values=choices, textvariable=entryvar,
+            width=max(len(s) for s in choices))
         entry.configure(state='readonly')
         entry.grid(column=2, row=location, sticky=tk.W+tk.E)
         self.entries[configoption] = entryvar

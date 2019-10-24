@@ -15,6 +15,8 @@ import typing
 from ..config import CONFIGDIRECTORY, CONFIG
 common = importlib.import_module(
     '..gui-common.interface', package=__package__)
+from .. import update
+from .. import version
 
 from . import config
 from . import dark
@@ -58,6 +60,8 @@ class GraphicalInterface(tk.Tk):
         self._restore_windows()
         self._prepare_windows()
         self.protocol('WM_DELETE_WINDOW', self.quit)
+
+        self._start_update_check()
 
     def _restore_windows(self) -> None:
         '''
@@ -182,7 +186,7 @@ class GraphicalInterface(tk.Tk):
         self.title('Menu')
 
         self._menu = ttk.Frame(self)
-        self._menu.grid(sticky=misc.A)
+        self._menu.grid(column=0, row=0, sticky=misc.A)
 
         self._buttons = {
             'items': self._make_button('items', (0, 0), 'Items'),
@@ -273,3 +277,28 @@ class GraphicalInterface(tk.Tk):
                 dst.write(src.read())
         tkmbox.showinfo('Load file', 'Please restart z3-tracker.')
         self.quit()
+
+    def _start_update_check(self) -> None:
+        '''
+        Initiate update check.
+        '''
+
+        check = threading.Thread(
+            target=self._update_check, name='Update checker', daemon=True)
+        check.start()
+
+    def _update_check(self) -> None:
+        '''
+        Check for updates.
+        '''
+
+        update_available = update.check_update_availability()
+        if update_available:
+            update_text='''Update available:
+- current: {0:s}
+- newest: {1:s}'''.format(version.__version__, update_available)
+            update_frame = ttk.Frame(self)
+            update_frame.grid(column=0, row=1, sticky=misc.A)
+            update_label = ttk.Label(
+                update_frame, text=update_text)
+            update_label.grid(sticky=misc.A)

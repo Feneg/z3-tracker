@@ -41,8 +41,7 @@ class ItemWindow(tk.Toplevel):
         self.frame.grid(column=0, row=0, sticky=misc.A)
         self.helpertext = tk.StringVar()
         self.helper = ttk.Label(
-            self, textvariable=self.helpertext,
-            font=('Arial', int(12 * CONFIG['icon_size'])))
+            self, textvariable=self.helpertext)
         self.helper.grid(column=0, row=1, sticky=tk.S)
 
         self.scaling = _scale_factors()

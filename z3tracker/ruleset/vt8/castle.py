@@ -177,12 +177,12 @@ LOCATIONS = {
                 ('item', 'lantern'), ('settings', 'standard'),
                 ('and', [
                     ('settings', 'placement_advanced'), ('item', 'firerod')])],
-            'Sewers Last Hall': []}
+            'Sewers Last Hall': [('state', 'maybe;add')]}
     },
     'Sewers Last Hall': {
         'type': 'area', 'dungeon': 'Castle Dungeons',
         'link': {
-            'Sewers Locked Door': [('smallkey', ('Castle Dungeons', 1))],
+            'Sewers Locked Door': [('state', 'maybe;add')],
             'Sewers Treasure': [('item', 'bombs'), ('item', 'pegasus')],
             'Sanctuary': [('rabbitbarrier', None)]}
     },

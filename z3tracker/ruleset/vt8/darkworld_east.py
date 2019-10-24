@@ -162,8 +162,11 @@ LOCATIONS = {
         'type': 'interior',
         'link': {
             'Ganon': [('and', [
-                ('item', 'mastersword'), ('item', 'bow'),
-                ('item', 'silverarrows')])]}
+                ('item', 'mastersword'),
+                ('item', 'bow'),
+                ('or', [
+                    ('item', 'silverarrows'),
+                    ('settings', 'placement_advanced')])])]}
     },
     'Ganon': {
         'type': 'ganon', 'map': 'dark', 'coord': (324, 240),

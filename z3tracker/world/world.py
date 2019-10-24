@@ -25,7 +25,7 @@ class _DelayCheck(Exception):
         '''
 
         super().__init__()
-        assert delayclass in ('common', 'smallkey', 'bigkey', 'reward')
+        assert delayclass in ('common', 'smallkey', 'bigkey', 'reward', 'maybe')
         self.delayclass = delayclass
 
 class _SmallKeyCheck(Exception):
@@ -248,7 +248,8 @@ class Tracker(object):
                         if self.ruleset[loc].type != 'area':
                             dungeonchecks.append(loc in available)
                     if all(dungeonchecks):
-                        clearable = 'available'
+                        clearable = available[
+                            '{0:s} Reward'.format(button)]
                     elif any(dungeonchecks):
                         clearable = 'visible'
                     else:
@@ -256,7 +257,7 @@ class Tracker(object):
                     if not self._check_bossfight(button):
                         finishable = 'unavailable'
                     elif '{0:s} Reward'.format(button) in available:
-                        finishable = 'available'
+                        finishable = available['{0:s} Reward'.format(button)]
                     elif self.ruleset[button].bossroad in available:
                         finishable = 'visible'
                     else:
@@ -298,7 +299,8 @@ class Tracker(object):
         available = {}
         reachable = [_Connection(s) for s in self.startpoint]
         visible = set()
-        delayed = {'common': [], 'smallkey': [], 'bigkey': [], 'reward': []}
+        delayed = {'common': [], 'smallkey': [], 'bigkey': [], 'reward': [],
+                   'maybe': []}
 
         # Go through locations.
         while reachable:
@@ -308,7 +310,10 @@ class Tracker(object):
 
             # Mark current location.
             if self.ruleset[current].checked is not None:
-                available[current] = 'available'
+                if 'maybe' in state:
+                    available[current] = 'maybe'
+                else:
+                    available[current] = 'available'
             self.ruleset[current].checked = True
 
             # Add fixed keys.
@@ -335,7 +340,9 @@ class Tracker(object):
                 if ret:
                     for retstate in addstate:
                         s = retstate.split(';')
-                        if s[0] in newstate:
+                        if len(s) > 1 and s[1] == 'add':
+                            newstate.add(s[0])
+                        elif s[0] in newstate:
                             newstate.remove(s[0])
                         elif not (len(s) > 1 and s[1] == 'dis'):
                             newstate.add(s[0])
@@ -355,6 +362,7 @@ class Tracker(object):
                 for delayclass in delayed:
                     for idx, loc in enumerate(delayed[delayclass]):
                         current, state = loc[1].get()
+                        newstate = state.copy()
                         try:
                             ret, addstate = self._parse_requirement(
                                 current, state, available, keys)
@@ -366,12 +374,14 @@ class Tracker(object):
                         if ret:
                             for retstate in addstate:
                                 s = retstate.split(';')
-                                if s[0] in state:
-                                    state.remove(s[0])
+                                if len(s) > 1 and s[1] == 'add':
+                                    newstate.add(s[0])
+                                elif s[0] in state:
+                                    newstate.remove(s[0])
                                 elif not (len(s) > 1 and s[1] == 'dis'):
-                                    state.add(s[0])
+                                    newstate.add(s[0])
                             reachable.append(_Connection(
-                                delayed[delayclass].pop(idx)[0], state))
+                                delayed[delayclass].pop(idx)[0], newstate))
                             break
                     if reachable:
                         break
@@ -382,7 +392,7 @@ class Tracker(object):
     def _parse_requirement(
             self, req: typing.Sequence[typing.Sequence], state: typing.Sequence,
             nodelay: typing.Sequence[str], keys: dict = {},
-            collector=any) -> (bool, set):
+            collector=any) -> (bool, list):
         '''
         Parse generic link requirement object.
 
@@ -395,7 +405,7 @@ class Tracker(object):
             collector: something like any() or all()
         Returns:
             bool: True if requirements are met
-            set: list of state flags to toggle
+            list: list of state flags to toggle
         '''
 
         if not req:
@@ -444,8 +454,9 @@ class Tracker(object):
             elif rtype == 'access':
                 if not nodelay:
                     raise _DelayCheck('common')
-                else:
-                    result.append(robj in nodelay)
+                result.append(robj in nodelay)
+                if result[-1] and nodelay[robj] == 'maybe':
+                    addstate.append('maybe;add')
 
             # glitch
             elif rtype == 'glitch':
@@ -459,7 +470,10 @@ class Tracker(object):
             elif rtype == 'medallion':
                 if 'rabbit' in state and not 'pearl' in self.items:
                     result.append(False)
-                result.append(self._check_medallion(robj))
+                res, maybe = self._check_medallion(robj)
+                result.append(res)
+                if maybe:
+                    addstate.append('maybe;add')
 
             # mudora
             elif rtype == 'mudora':
@@ -475,8 +489,10 @@ class Tracker(object):
             elif rtype in ('pendant', 'crystals'):
                 if not nodelay:
                     raise _DelayCheck('reward')
-                else:
-                    result.append(self._reward_locations(robj, nodelay))
+                res, maybe = self._reward_locations(robj, nodelay)
+                result.append(res)
+                if maybe:
+                    addstate.append('maybe;add')
 
             # smallkey
             elif rtype == 'smallkey':
@@ -523,7 +539,7 @@ class Tracker(object):
                                 [('crystals', 'ganon'), ('pendant', 'courage'),
                                  ('pendant', 'power'), ('pendant', 'wisdom')],
                                 state, nodelay, keys, all)
-                    elif 'goal_pendants' in self.settings:
+                    elif 'goal_pedestal' in self.settings:
                         sub = self._parse_requirement(
                                 [('pendant', 'courage'), ('pendant', 'power'),
                                  ('pendant', 'wisdom')],
@@ -548,7 +564,9 @@ class Tracker(object):
             # state
             elif rtype == 'state':
                 statestr = robj.split(';')
-                assert statestr[0] in ('rabbit',)
+                assert statestr[0] in ('rabbit', 'maybe')
+                if statestr[0] == 'maybe' and not nodelay:
+                    raise _DelayCheck('maybe')
                 addstate.append(statestr[0])
                 result.append(True)
 
@@ -589,7 +607,6 @@ class Tracker(object):
             return False
         return True
 
-
     def _check_bigkey(
             self, availability: typing.Sequence[str], dungeon: str) -> bool:
         '''
@@ -621,28 +638,36 @@ class Tracker(object):
                 '{0:s} Boss Item'.format(dungeon)]
         return self._parse_requirement(requirement, [], None)
 
-    def _check_medallion(self, dungeon) -> bool:
+    def _check_medallion(self, dungeon) -> (bool, bool):
         '''
         Check whether medallion requirement is sattisfied.
 
         Args:
             dungeon: 'Misery Mire' or 'Turtle Rock'
+        Returns:
+            bool: True if fight is finishable
+            bool: True if 'maybe' state should be added
         '''
 
         assert dungeon in ('Misery Mire', 'Turtle Rock')
         req = self.dungeons[dungeon]['medallion']
         if req == 'unknown':
-            res = (
-                self.items['bombos'] > 0 and self.items['ether'] > 0 and
-                self.items['quake'] > 0)
+            res = (self.items['bombos'] > 0, self.items['ether'] > 0,
+                   self.items['quake'] > 0)
+            if all(res):
+                res = True, False
+            elif any(res):
+                res = True, True
+            else:
+                res = False, False
         else:
-            res = self.items[req] > 0
+            res = self.items[req] > 0, False
         if not 'swordless' in self.settings and self.items['sword'] == 0:
-            res = False
+            res = False, False
         return res
 
     def _reward_locations(
-            self, reward: str, available: typing.Sequence[str]) -> bool:
+            self, reward: str, available: typing.Sequence[str]) -> (bool, bool):
         '''
         Retrieve required locations for reward.
 
@@ -652,6 +677,7 @@ class Tracker(object):
             available: list of available locations
         Returns:
             bool: True if all required locations are available
+            bool: True if 'maybe' state should be added
         '''
 
         assert reward in (
@@ -675,6 +701,16 @@ class Tracker(object):
             'ganon': self.crystals['ganon']}
         if required[reward] < 0:
             required[reward] = 7
+            unknown_number = True
+        else:
+            unknown_number = False
+        total = dict.fromkeys(
+            ('courage', 'powerwisdom', '56crystal', 'crystal'), 0)
+        for dungeon in self.dungeons:
+            if self.dungeons[dungeon]['reward'] != 'unknown':
+                total[self.dungeons[dungeon]['reward']] += 1
+                if self.dungeons[dungeon]['reward'] == '56crystal':
+                    total['crystal'] += 1
         enough = len(rewarddungeons) >= required[reward]
         if not enough:
             rewarddungeons = []
@@ -688,14 +724,26 @@ class Tracker(object):
                     self.dungeons[dungeon]['reward'] == '56crystal'):
                     rewarddungeons.append(dungeon)
         locations = []
+        maybes = 0
         for dungeon in rewarddungeons:
-            locations.append(self._parse_requirement(
-                [('access', '{0:s} Reward'.format(dungeon))], [], available)[0])
+            res, add = self._parse_requirement(
+                [('access', '{0:s} Reward'.format(dungeon))], [], available)
+            locations.append(res)
+            for retstate in add:
+                if retstate.split(';')[0] == 'maybe':
+                    maybes += 1
+                    break
         if enough:
             ret = sum(locations) >= required[reward]
+            addmaybe = required[reward] + maybes > total[conversion[reward]]
         else:
             ret = all(locations)
-        return ret
+            if ret:
+                addmaybe = False
+            else:
+                ret = unknown_number
+                addmaybe = True
+        return ret, addmaybe
 
     def total_chests(self, dungeon: str) -> int:
         '''

@@ -53,7 +53,7 @@ LOCATIONS = {
     },
     'Ice Palace': {
         'type': 'dungeon', 'map': 'dark', 'coord': (523, 552),
-        'bossroad': 'Ice Palace Boss Puzzle',
+        'bossroad': 'Ice Palace Boss',
         'link': {}
     },
     'Misery Mire': {

@@ -67,10 +67,10 @@ class HelpWindow(tk.Toplevel):
         canvas.grid(column=0, row=1, sticky=misc.A)
         button = canvas.create_oval(*loc)
         canvas.itemconfigure(
-            button, 
-            activefill=BUTTONTYPE['standard']['colours']['checked']['active'],
-            fill=BUTTONTYPE['standard']['colours']['checked']['normal'])
-        text = ttk.Label(widget, text='Already checked')
+            button,
+            activefill=BUTTONTYPE['standard']['colours']['maybe']['active'],
+            fill=BUTTONTYPE['standard']['colours']['maybe']['normal'])
+        text = ttk.Label(widget, text='Possibly available')
         text.grid(column=1, row=1, sticky=tk.W)
         self.widgets.extend((canvas, widget))
 
@@ -79,10 +79,9 @@ class HelpWindow(tk.Toplevel):
         button = canvas.create_oval(*loc)
         canvas.itemconfigure(
             button, 
-            activefill=BUTTONTYPE[
-                'standard']['colours']['unavailable']['active'],
-            fill=BUTTONTYPE['standard']['colours']['unavailable']['normal'])
-        text = ttk.Label(widget, text='Unavailable')
+            activefill=BUTTONTYPE['standard']['colours']['checked']['active'],
+            fill=BUTTONTYPE['standard']['colours']['checked']['normal'])
+        text = ttk.Label(widget, text='Already checked')
         text.grid(column=1, row=2, sticky=tk.W)
         self.widgets.extend((canvas, widget))
 
@@ -91,10 +90,22 @@ class HelpWindow(tk.Toplevel):
         button = canvas.create_oval(*loc)
         canvas.itemconfigure(
             button, 
+            activefill=BUTTONTYPE[
+                'standard']['colours']['unavailable']['active'],
+            fill=BUTTONTYPE['standard']['colours']['unavailable']['normal'])
+        text = ttk.Label(widget, text='Unavailable')
+        text.grid(column=1, row=3, sticky=tk.W)
+        self.widgets.extend((canvas, widget))
+
+        canvas = tk.Canvas(widget, height=32, width=32)
+        canvas.grid(column=0, row=4, sticky=misc.A)
+        button = canvas.create_oval(*loc)
+        canvas.itemconfigure(
+            button, 
             activefill=BUTTONTYPE['standard']['colours']['visible']['active'],
             fill=BUTTONTYPE['standard']['colours']['visible']['normal'])
         text = ttk.Label(widget, text='Unavailable, but visible')
-        text.grid(column=1, row=3, sticky=tk.W)
+        text.grid(column=1, row=4, sticky=tk.W)
         self.widgets.extend((canvas, widget))
 
     def _dungeon_buttons(self) -> None:
@@ -122,8 +133,8 @@ class HelpWindow(tk.Toplevel):
         button = canvas.create_rectangle(*loc)
         canvas.itemconfigure(
             button,
-            fill=BUTTONTYPE['standard']['colours']['checked']['normal'])
-        text = ttk.Label(widget, text='Fully checked')
+            fill=BUTTONTYPE['standard']['colours']['maybe']['normal'])
+        text = ttk.Label(widget, text='Available if accessible')
         text.grid(column=1, row=1, sticky=tk.W)
         self.widgets.extend((canvas, widget))
 
@@ -132,8 +143,8 @@ class HelpWindow(tk.Toplevel):
         button = canvas.create_rectangle(*loc)
         canvas.itemconfigure(
             button,
-            fill=BUTTONTYPE['standard']['colours']['unavailable']['normal'])
-        text = ttk.Label(widget, text='All unavailable')
+            fill=BUTTONTYPE['standard']['colours']['checked']['normal'])
+        text = ttk.Label(widget, text='Fully checked')
         text.grid(column=1, row=2, sticky=tk.W)
         self.widgets.extend((canvas, widget))
 
@@ -142,9 +153,19 @@ class HelpWindow(tk.Toplevel):
         button = canvas.create_rectangle(*loc)
         canvas.itemconfigure(
             button,
+            fill=BUTTONTYPE['standard']['colours']['unavailable']['normal'])
+        text = ttk.Label(widget, text='All unavailable')
+        text.grid(column=1, row=3, sticky=tk.W)
+        self.widgets.extend((canvas, widget))
+
+        canvas = tk.Canvas(widget, height=32, width=32)
+        canvas.grid(column=0, row=4, sticky=misc.A)
+        button = canvas.create_rectangle(*loc)
+        canvas.itemconfigure(
+            button,
             fill=BUTTONTYPE['standard']['colours']['visible']['normal'])
         text = ttk.Label(widget, text='Possibly or partially available')
-        text.grid(column=1, row=3, sticky=tk.W)
+        text.grid(column=1, row=4, sticky=tk.W)
         self.widgets.extend((canvas, widget))
 
     def _entrance_buttons(self):

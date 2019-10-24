@@ -169,8 +169,9 @@ LOCATIONS = {
         'type': 'area', 'dungeon': 'Ice Palace',
         'link': {
             'Ice Palace Above Boss': [('smallkey', ('Ice Palace', 7))],
-            'Ice Palace Somaria Puzzle': [
-                ('settings', 'placement_basic'), ('item', 'somaria')],
+            #'Ice Palace Somaria Puzzle': [
+            #    ('settings', 'placement_basic'), ('item', 'somaria')],
+            'Ice Palace Somaria Puzzle': [],  # Until dungeons work better
             'Ice Palace Boss Puzzle': []}
     },
     'Ice Palace Somaria Puzzle': {
