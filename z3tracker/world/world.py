@@ -21,11 +21,12 @@ class _DelayCheck(Exception):
     def __init__(self, delayclass: str):
         '''
         Args:
-            delayclass: 'common', 'smallkey', 'bigkey', 'reward'
+            delayclass: 'common', 'smallkey', 'bigkey', 'reward', 'boss'
         '''
 
         super().__init__()
-        assert delayclass in ('common', 'smallkey', 'bigkey', 'reward', 'maybe')
+        assert delayclass in (
+            'common', 'smallkey', 'bigkey', 'reward', 'maybe', 'boss')
         self.delayclass = delayclass
 
 class _SmallKeyCheck(Exception):
@@ -248,16 +249,26 @@ class Tracker(object):
                         if self.ruleset[loc].type != 'area':
                             dungeonchecks.append(loc in available)
                     if all(dungeonchecks):
-                        clearable = available[
-                            '{0:s} Reward'.format(button)]
+                        try:
+                            clearable = available[
+                                '{0:s} Boss'.format(button)]
+                        except KeyError:
+                            clearable = available[
+                                '{0:s} Entrance (I)'.format(button)]
+                            if (clearable == 'available' and
+                                not self._check_dungeon_state(button)):
+                                clearable = 'indirect'
                     elif any(dungeonchecks):
                         clearable = 'visible'
                     else:
                         clearable = 'unavailable'
                     if not self._check_bossfight(button):
                         finishable = 'unavailable'
-                    elif '{0:s} Reward'.format(button) in available:
-                        finishable = available['{0:s} Reward'.format(button)]
+                    elif '{0:s} Boss'.format(button) in available:
+                        finishable = available['{0:s} Boss'.format(button)]
+                        if (finishable == 'available' and
+                            clearable == 'indirect'):
+                            finishable = 'indirect'
                     elif self.ruleset[button].bossroad in available:
                         finishable = 'visible'
                     else:
@@ -299,8 +310,8 @@ class Tracker(object):
         available = {}
         reachable = [_Connection(s) for s in self.startpoint]
         visible = set()
-        delayed = {'common': [], 'smallkey': [], 'bigkey': [], 'reward': [],
-                   'maybe': []}
+        delayed = {'common': [], 'smallkey': [], 'bigkey': [], 'boss': [],
+                   'reward': [], 'maybe': []}
 
         # Go through locations.
         while reachable:
@@ -312,6 +323,8 @@ class Tracker(object):
             if self.ruleset[current].checked is not None:
                 if 'maybe' in state:
                     available[current] = 'maybe'
+                elif 'boss' in state:
+                    available[current] = 'indirect'
                 else:
                     available[current] = 'available'
             self.ruleset[current].checked = True
@@ -455,8 +468,8 @@ class Tracker(object):
                 if not nodelay:
                     raise _DelayCheck('common')
                 result.append(robj in nodelay)
-                if result[-1] and nodelay[robj] == 'maybe':
-                    addstate.append('maybe;add')
+                if result[-1] and nodelay[robj] in ('maybe', 'boss'):
+                    addstate.append('{0:s};add'.format(nodelay[robj]))
 
             # glitch
             elif rtype == 'glitch':
@@ -489,10 +502,10 @@ class Tracker(object):
             elif rtype in ('pendant', 'crystals'):
                 if not nodelay:
                     raise _DelayCheck('reward')
-                res, maybe = self._reward_locations(robj, nodelay)
+                res, flag = self._reward_locations(robj, nodelay)
                 result.append(res)
-                if maybe:
-                    addstate.append('maybe;add')
+                if flag:
+                    addstate.append('{0:s};add'.format(flag))
 
             # smallkey
             elif rtype == 'smallkey':
@@ -577,6 +590,14 @@ class Tracker(object):
                     result.append(False)
                 else:
                     result.append(True)
+
+            # boss
+            elif rtype == 'boss':
+                if not nodelay:
+                    raise _DelayCheck('boss')
+                if not self._check_dungeon_state(robj):
+                    addstate.append('boss;add')
+                result.append(True)
 
             # error
             else:
@@ -667,7 +688,7 @@ class Tracker(object):
         return res
 
     def _reward_locations(
-            self, reward: str, available: typing.Sequence[str]) -> (bool, bool):
+            self, reward: str, available: typing.Sequence[str]) -> (bool, str):
         '''
         Retrieve required locations for reward.
 
@@ -677,7 +698,7 @@ class Tracker(object):
             available: list of available locations
         Returns:
             bool: True if all required locations are available
-            bool: True if 'maybe' state should be added
+            str: '', 'maybe' or 'boss'
         '''
 
         assert reward in (
@@ -700,7 +721,6 @@ class Tracker(object):
             'ganonstower': self.crystals['tower'],
             'ganon': self.crystals['ganon']}
         if required[reward] < 0:
-            required[reward] = 7
             unknown_number = True
         else:
             unknown_number = False
@@ -725,6 +745,7 @@ class Tracker(object):
                     rewarddungeons.append(dungeon)
         locations = []
         maybes = 0
+        boss_required = 0
         for dungeon in rewarddungeons:
             res, add = self._parse_requirement(
                 [('access', '{0:s} Reward'.format(dungeon))], [], available)
@@ -733,17 +754,23 @@ class Tracker(object):
                 if retstate.split(';')[0] == 'maybe':
                     maybes += 1
                     break
+            if not self._check_dungeon_state(dungeon):
+                boss_required += 1
+        addflag = ''
         if enough:
             ret = sum(locations) >= required[reward]
-            addmaybe = required[reward] + maybes > total[conversion[reward]]
+            if required[reward] + boss_required > total[conversion[reward]]:
+                addflag = 'boss'
+            if required[reward] + maybes > total[conversion[reward]]:
+                addflag = 'maybe'
+            if sum(locations) < total[conversion[reward]] and unknown_number:
+                addflag = 'maybe'
         else:
             ret = all(locations)
-            if ret:
-                addmaybe = False
-            else:
+            if not ret:
                 ret = unknown_number
-                addmaybe = True
-        return ret, addmaybe
+                addflag = 'maybe'
+        return ret, addflag
 
     def total_chests(self, dungeon: str) -> int:
         '''
@@ -778,6 +805,22 @@ class Tracker(object):
             mapd = 'dark'
         self.maps[mapd].tracker[dungeon] = state
         self.rulecheck()
+
+    def _check_dungeon_state(self, dungeon: str) -> bool:
+        '''
+        Check whether dungeon reward has been collected or not.
+
+        Args:
+            dungeon: name of dungeon
+        Returns:
+            bool: True if dungeon reward has been picked up
+        '''
+
+        try:
+            ret = self.maps['dark'].tracker[dungeon][1]
+        except KeyError:
+            ret = self.maps['light'].tracker[dungeon][1]
+        return not ret
 
     def set_crystal_requirement(self, tower: int, ganon: int) -> None:
         '''

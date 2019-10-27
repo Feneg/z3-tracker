@@ -126,8 +126,27 @@ LOCATIONS = {
             'East Dark World': [],
             'Pyramid Item': [],
             'Pyramid Fairy Entrance (E)': [('and', [
-                ('access', 'Bomb Shop Entrance (I)'), ('crystals', 'fairy'),
-                ('rabbitbarrier', None)])],
+                ('access', 'Bomb Shop Entrance (I)'),
+                ('crystals', 'fairy'),
+                ('rabbitbarrier', None),
+                ('or', [
+                    ('and', [
+                        ('or', [
+                            ('settings', 'open'), ('settings', 'standard')]),
+                        ('nosettings', 'entrance'),
+                        ('item', 'hammer')]),
+                    ('and', [
+                        ('settings', 'inverted'),
+                        ('nosettings', 'entrance'),
+                        ('item', 'mirror')]),
+                    ('and', [
+                        ('or', [
+                            ('and', [
+                                ('nosettings', 'open'),
+                                ('nosettings', 'standard'),
+                                ('nosettings', 'inverted')]),
+                            ('settings', 'entrance')]),
+                        ('state', 'maybe;add')])])])],
             'Ganon Drop Entrance (E)': [('and', [
                 ('nosettings', 'inverted'), ('macro', 'ganon')])]}
     },

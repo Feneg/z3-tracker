@@ -321,10 +321,12 @@ class MapDisplay(tk.Toplevel):
 
         Args:
             name: location name
-            availability: 'available', 'unavailable', 'visible', 'maybe'
+            availability: 'available', 'unavailable', 'visible', 'maybe',
+                'indirect'
         '''
 
-        assert availability in ('available', 'unavailable', 'visible', 'maybe')
+        assert availability in (
+            'available', 'unavailable', 'visible', 'maybe', 'indirect')
         self.button[name]['available'] = availability
         self._set_colour(name)
 
@@ -335,11 +337,13 @@ class MapDisplay(tk.Toplevel):
 
         Args:
             name: location name
-            availability: two of 'available', 'unavailable', 'visible'
+            availability: two of 'available', 'unavailable', 'visible', 'maybe',
+                'indirect'
         '''
 
         for idx, avail in enumerate(availability):
-            assert avail in ('available', 'unavailable', 'visible', 'maybe')
+            assert avail in (
+                'available', 'unavailable', 'visible', 'maybe', 'indirect')
             self.button[name]['available'][idx] = avail
         self._set_colour(name)
         self.tracker.save()

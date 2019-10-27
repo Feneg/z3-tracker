@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='z3-tracker',
-    version='0.9.5',
+    version='0.9.6',
     author='Feneg',
     description='Helper program for Link to the Past randomiser',
     url='https://www.github.com/feneg/z3-tracker',

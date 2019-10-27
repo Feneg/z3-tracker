@@ -328,7 +328,7 @@ LOCATIONS = {
     'Castle Tower Boss Item': {
         'type': 'area', 'dungeon': 'Castle Tower',
         'link': {
-            'Castle Tower Reward': []}
+            'Castle Tower Reward': [('boss', 'Castle Tower')]}
     },
     'Castle Tower Reward': {
         'type': 'area', 'dungeon': 'Castle Tower',
