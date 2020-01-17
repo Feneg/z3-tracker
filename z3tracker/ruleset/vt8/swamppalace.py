@@ -42,7 +42,7 @@ LOCATIONS = {
         'link': {
             'Swamp Palace Canal': [('item', 'flippers')],
             'Swamp Palace Key': [],
-            'Swamp Palace Water Hall': [('smallkey', ('Swamp Palace', 1))]}
+            'Swamp Palace Water Hall': [('smallkey', 'Swamp Palace')]}
     },
     'Swamp Palace Key': {
         'type': 'dungeonchest', 'dungeon': 'Swamp Palace',
@@ -55,7 +55,7 @@ LOCATIONS = {
             'Swamp Palace After Canal': [],
             'Swamp Palace Map': [('item', 'bombs')],
             'Swamp Palace First Hidden Key': [],
-            'Swamp Palace East Basin': [('smallkey', ('Swamp Palace', 1))]}
+            'Swamp Palace East Basin': [('smallkey', 'Swamp Palace')]}
     },
     'Swamp Palace Map': {
         'type': 'dungeonchest', 'dungeon': 'Swamp Palace',
@@ -73,7 +73,7 @@ LOCATIONS = {
             'Swamp Palace Water Hall': [],
             'Swamp Palace Second Hidden Key': [],
             'Swamp Palace East Switch Room': [
-                ('smallkey', ('Swamp Palace', 1))]}
+                ('smallkey', 'Swamp Palace')]}
     },
     'Swamp Palace Second Hidden Key': {
         'type': 'dungeonkey', 'dungeon': 'Swamp Palace',
@@ -99,7 +99,7 @@ LOCATIONS = {
             'Swamp Palace East Switch': [],
             'Swamp Palace Compass': [],
             'Swamp Palace Third Hidden Key': [],
-            'Swamp Palace West Switch': [('smallkey', ('Swamp Palace', 1))],
+            'Swamp Palace West Switch': [('smallkey', 'Swamp Palace')],
             'Swamp Palace Treasure': [('bigkey', 'Swamp Palace')],
             'Swamp Palace Fourth Hidden Key': [('item', 'hookshot')],
             'Swamp Palace Gauntlet Entrance': [('item', 'hookshot')]}
@@ -151,7 +151,7 @@ LOCATIONS = {
         'type': 'area', 'dungeon': 'Swamp Palace',
         'link': {
             'Swamp Palace Main Hall': [],
-            'Swamp Palace Gauntlet': [('smallkey', ('Swamp Palace', 1))]}
+            'Swamp Palace Gauntlet': [('smallkey', 'Swamp Palace')]}
     },
     'Swamp Palace Gauntlet': {
         'type': 'area', 'dungeon': 'Swamp Palace',
@@ -197,7 +197,7 @@ LOCATIONS = {
                             ('item', 'firerod'), ('item', 'icerod')])])])])]}
     },
     'Swamp Palace Boss Item': {
-        'type': 'dungeonchest_nokey', 'dungeon': 'Swamp Palace',
+        'type': 'dungeonchest', 'dungeon': 'Swamp Palace',
         'link': {
             'Swamp Palace Reward': []}
     },

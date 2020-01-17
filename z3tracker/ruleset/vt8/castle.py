@@ -83,7 +83,7 @@ LOCATIONS = {
             'Hyrule Castle Interior': [],
             'Dungeons Map': [],
             'Dungeons First Soldier Key': [('rabbitbarrier', None)],
-            'Dungeons Descent 2': [('smallkey', ('Castle Dungeons', 1))]}
+            'Dungeons Descent 2': [('smallkey', 'Castle Dungeons')]}
     },
     'Dungeons Map': {
         'type': 'dungeonchest', 'dungeon': 'Castle Dungeons',
@@ -101,7 +101,7 @@ LOCATIONS = {
             'Dungeons Descent 1': [],
             'Dungeons Second Soldier Key': [],
             'Dungeons Treasure': [],
-            'Dungeons Cells': [('smallkey', ('Castle Dungeons', 1))]}
+            'Dungeons Cells': [('smallkey', 'Castle Dungeons')]}
     },
     'Dungeons Second Soldier Key': {
         'type': 'dungeonkey', 'dungeon': 'Castle Dungeons',
@@ -152,7 +152,7 @@ LOCATIONS = {
         'link': {
             'Sewers Chest': [('rabbitbarrier', None)],
             'Sewers Rat Key': [],
-            'Sewers Locked Door': [('smallkey', ('Castle Dungeons', 1))]}
+            'Sewers Locked Door': [('smallkey', 'Castle Dungeons')]}
     },
     'Sewers Chest': {
         'type': 'drop', 'map': 'light', 'coord': (344, 223),
@@ -279,7 +279,7 @@ LOCATIONS = {
         'link': {
             'Castle Tower Entrance (I)': [],
             'Castle Tower First Chest': [],
-            'Castle Tower Ascent Stairs': [('smallkey', ('Castle Tower', 1))]}
+            'Castle Tower Ascent Stairs': [('smallkey', 'Castle Tower')]}
     },
     'Castle Tower First Chest': {
         'type': 'dungeonchest', 'dungeon': 'Castle Tower',
@@ -300,7 +300,7 @@ LOCATIONS = {
         'link': {
             'Castle Tower Ascent Stairs': [],
             'Castle Tower Second Chest': [],
-            'Castle Tower Ascent 3': [('smallkey', ('Castle Tower', 2))]}
+            'Castle Tower Ascent 3': [('smallkey', 'Castle Tower')]}
     },
     'Castle Tower Second Chest': {
         'type': 'dungeonchest', 'dungeon': 'Castle Tower',

@@ -130,7 +130,7 @@ LOCATIONS = {
             'Desert Palace Main Entrance Entrance (I)': [],
             'Desert Palace Side Entrance Entrance (I)': [],
             'Desert Palace Back Entrance Entrance (I)': [],
-            'Desert Palace Compass': [('smallkey', ('Desert Palace', 2))],
+            'Desert Palace Compass': [('smallkey', 'Desert Palace')],
             'Desert Palace Map': [],
             'Desert Palace Small Key': [('item', 'pegasus')],
             'Desert Palace Treasure': [('bigkey', 'Desert Palace')]}
@@ -157,7 +157,7 @@ LOCATIONS = {
             'Desert Palace Interior': []}
     },
     'Desert Palace Treasure': {
-        'type': 'dungeonchest_nokey', 'dungeon': 'Desert Palace',
+        'type': 'dungeonchest', 'dungeon': 'Desert Palace',
         'link': {
             'Desert Palace Interior': []}
     },
@@ -214,7 +214,7 @@ LOCATIONS = {
         'link': {
             'Desert Palace Gauntlet Entrance (I)': [],
             'Desert Palace Hidden Key 1': [],
-            'Desert Palace Trap Room 2': [('smallkey', ('Desert Palace', 2))]}
+            'Desert Palace Trap Room 2': [('smallkey', 'Desert Palace')]}
     },
     'Desert Palace Hidden Key 1': {
         'type': 'dungeonkey', 'dungeon': 'Desert Palace',
@@ -226,7 +226,7 @@ LOCATIONS = {
         'link': {
             'Desert Palace Trap Room 1': [],
             'Desert Palace Hidden Key 2': [],
-            'Desert Palace Torch Room': [('smallkey', ('Desert Palace', 2))]}
+            'Desert Palace Torch Room': [('smallkey', 'Desert Palace')]}
     },
     'Desert Palace Hidden Key 2': {
         'type': 'dungeonkey', 'dungeon': 'Desert Palace',
@@ -237,9 +237,14 @@ LOCATIONS = {
         'type': 'area', 'dungeon': 'Desert Palace',
         'link': {
             'Desert Palace Trap Room 2': [],
-            'Desert Palace Boss': [('and', [
-                ('or', [('item', 'lantern'), ('item', 'firerod')]),
-                ('bigkey', 'Desert Palace')])]}
+            'Desert Palace Boss Door': [
+                ('item', 'lantern'), ('item', 'firerod')]}
+    },
+    'Desert Palace Boss Door': {
+        'type': 'area', 'dungeon': 'Desert Palace',
+        'link': {
+            'Desert Palace Torch Room': [],
+            'Desert Palace Boss': [('bigkey', 'Desert Palace')]}
     },
     'Desert Palace Boss': {
         'type': 'dungeonboss', 'dungeon': 'Desert Palace',

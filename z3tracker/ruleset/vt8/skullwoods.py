@@ -52,7 +52,7 @@ LOCATIONS = {
         'link': {
             'Skull Woods First Entrance Entrance (I)': [],
             'Skull Woods Map': [('rabbitbarrier', None)],
-            'Skull Woods West Drop': [('smallkey', ('Skull Woods', 5))]}
+            'Skull Woods West Drop': [('smallkey', 'Skull Woods')]}
     },
     'Skull Woods Map': {
         'type': 'dungeonchest', 'dungeon': 'Skull Woods',
@@ -62,7 +62,7 @@ LOCATIONS = {
     'Skull Woods West Drop': {
         'type': 'area', 'dungeon': 'Skull Woods',
         'link': {
-            'Skull Woods First Entrance': [('smallkey', ('Skull Woods', 5))],
+            'Skull Woods First Entrance': [('smallkey', 'Skull Woods')],
             'Skull Woods Front Key': [('rabbitbarrier', None)],
             'Skull Woods Compass': [('rabbitbarrier', None)],
             'Skull Woods East Drop': []}
@@ -80,7 +80,7 @@ LOCATIONS = {
     'Skull Woods East Drop': {
         'type': 'area', 'dungeon': 'Skull Woods',
         'link': {
-            'Skull Woods First Entrance': [('smallkey', ('Skull Woods', 5))],
+            'Skull Woods First Entrance': [('smallkey', 'Skull Woods')],
             'Skull Woods Safety Key': [('rabbitbarrier', None)]}
     },
     'Skull Woods Safety Key': {
@@ -137,12 +137,18 @@ LOCATIONS = {
         'type': 'area', 'dungeon': 'Skull Woods',
         'link': {
             'Skull Woods First Entrance': [],
-            'Skull Woods Treasure': [('rabbitbarrier', None)]}
+            'Skull Woods Treasure Access': [('rabbitbarrier', None)]}
+    },
+    'Skull Woods Treasure Access': {
+        'type': 'area', 'dungeon': 'Skull Woods',
+        'link': {
+            'Skull Woods Central Drop': [],
+            'Skull Woods Treasure': [('bigkey', 'Skull Woods')]}
     },
     'Skull Woods Treasure': {
         'type': 'dungeonchest_nokey', 'dungeon': 'Skull Woods',
         'link': {
-            'Skull Woods Central Drop': []}
+            'Skull Woods Treasure Access': []}
     },
     'Skull Woods Second Entrance Entrance (E)': {
         'type': 'entrance_dungeon', 'map': 'dark', 'coord': (90, 96),
@@ -242,7 +248,7 @@ LOCATIONS = {
         'link': {
             'Skull Woods Fourth Entrance Entrance (I)': [],
             'Skull Woods Gauntlet Key': [('rabbitbarrier', None)],
-            'Skull Woods Gauntlet 1': [('smallkey', ('Skull Woods', 5))]}
+            'Skull Woods Gauntlet 1': [('smallkey', 'Skull Woods')]}
     },
     'Skull Woods Gauntlet Key': {
         'type': 'dungeonchest', 'dungeon': 'Skull Woods',
@@ -262,7 +268,7 @@ LOCATIONS = {
         'link': {
             'Skull Woods Gauntlet 2': [],
             'Skull Woods Gibdo Key': [],
-            'Skull Woods Boss': [('smallkey', ('Skull Woods', 5))]}
+            'Skull Woods Boss': [('smallkey', 'Skull Woods')]}
     },
     'Skull Woods Gibdo Key': {
         'type': 'dungeonkey', 'dungeon': 'Skull Woods',
@@ -291,7 +297,7 @@ LOCATIONS = {
                     ('item', 'hammer')])])]}
     },
     'Skull Woods Boss Item': {
-        'type': 'dungeonchest_nokey', 'dungeon': 'Skull Woods',
+        'type': 'dungeonchest', 'dungeon': 'Skull Woods',
         'link': {
             'Skull Woods Reward': []}
     },

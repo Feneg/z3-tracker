@@ -106,11 +106,11 @@ LOCATIONS = {
             'Misery Mire Bridge Key': [],
             'Misery Mire Hidden Key': [],
             'Misery Mire Spike Key': [],
-            'Misery Mire Map': [('smallkey', ('Misery Mire', 3))],
+            'Misery Mire Map': [('smallkey', 'Misery Mire')],
             'Misery Mire Treasure Room': [
                 ('item', 'hookshot'), ('item', 'pegasus')],
             'Misery Mire Upper Key': [],
-            'Misery Mire Switch Room': [('smallkey', ('Misery Mire', 3))],
+            'Misery Mire Switch Room': [('smallkey', 'Misery Mire')],
             'Misery Mire Gauntlet Bridge': [('bigkey', 'Misery Mire')]}
     },
     'Misery Mire Bridge Key': {
@@ -155,7 +155,7 @@ LOCATIONS = {
         'link': {
             'Misery Mire Interior': [],
             'Misery Mire Bari Key': [],
-            'Misery Mire Torch Room': [('smallkey', ('Misery Mire', 3))]}
+            'Misery Mire Torch Room': [('smallkey', 'Misery Mire')]}
     },
     'Misery Mire Bari Key': {
         'type': 'dungeonkey', 'dungeon': 'Misery Mire',
@@ -185,7 +185,8 @@ LOCATIONS = {
         'type': 'area', 'dungeon': 'Misery Mire',
         'link': {
             'Misery Mire Interior': [],
-            'Misery Mire Gauntlet': [('item', 'somaria')]}
+            'Misery Mire Gauntlet': [('and', [
+                ('item', 'lantern'), ('item', 'somaria')])]}
     },
     'Misery Mire Gauntlet': {
         'type': 'area', 'dungeon': 'Misery Mire',

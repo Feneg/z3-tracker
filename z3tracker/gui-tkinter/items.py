@@ -149,10 +149,10 @@ class ItemButton(tk.Canvas):
         if not item.state():
             for x in range(icon.width()):
                 for y in range(icon.height()):
-                    bw = sum(icon.get(x, y)) // 6
+                    bw = sum(icon.get(x, y)) // item.disabled[0]
                     if bw in (0, 255):
                         continue
-                    bw *= 4
+                    bw *= item.disabled[1]
                     bw = 255 if bw > 255 else int(bw)
                     icon.put('#{0:02x}{0:02x}{0:02x}'.format(bw), (x, y))
         self.img = self.create_image(0, 0, anchor=tk.NW, image=icon)

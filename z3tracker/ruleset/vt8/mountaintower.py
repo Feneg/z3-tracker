@@ -24,8 +24,7 @@ LOCATIONS = {
         'link': {
             'Mountain Tower Small Key': [],
             'Mountain Tower Map': [],
-            'Mountain Tower Big Key Descent': [
-                ('smallkey', ('Mountain Tower', 2))],
+            'Mountain Tower Big Key Descent': [('smallkey', 'Mountain Tower')],
             'Mountain Tower Ascent': [('bigkey', 'Mountain Tower')]}
     },
     'Mountain Tower Small Key': {
@@ -59,12 +58,12 @@ LOCATIONS = {
             'Mountain Tower Boss': []}
     },
     'Mountain Tower Compass': {
-        'type': 'dungeonchest_nokey', 'dungeon': 'Mountain Tower',
+        'type': 'dungeonchest', 'dungeon': 'Mountain Tower',
         'link': {
             'Mountain Tower Ascent': []}
     },
     'Mountain Tower Treasure': {
-        'type': 'dungeonchest_nokey', 'dungeon': 'Mountain Tower',
+        'type': 'dungeonchest', 'dungeon': 'Mountain Tower',
         'link': {
             'Mountain Tower Ascent': []}
     },

@@ -9,7 +9,6 @@ LOCATIONS = {
     'Turtle Rock Entrance Entrance (E)': {
         'type': 'entrance_dungeon', 'map': 'dark', 'coord': (618, 54),
         'link': {
-            'East Upper Death Mountain': [],
             'Turtle Rock Entrance Entrance (I)': [
                 ('settings', 'placement_advanced'),
                 ('and', [
@@ -27,21 +26,21 @@ LOCATIONS = {
     'Turtle Rock Big Hole': {
         'type': 'area', 'dungeon': 'Turtle Rock',
         'link': {
-            'Turtle Rock Entrance Entrance (I)': [('item', 'somaria')],
-            'Turtle Rock Compass': [('item', 'somaria')],
+            'Turtle Rock Entrance Entrance (I)': [],
+            'Turtle Rock Compass': [],
             'Turtle Rock Rolling Spikes': [('and', [
                 ('item', 'somaria'), ('item', 'firerod')])],
-            'Turtle Rock Hokkubokku Key Room': [('item', 'somaria')]}
+            'Turtle Rock Trapped Stalfos': []}
     },
     'Turtle Rock Compass': {
         'type': 'dungeonchest', 'dungeon': 'Turtle Rock',
         'link': {
-            'Turtle Rock Big Hole': []}
+            'Turtle Rock Big Hole': [('item', 'somaria')]}
     },
     'Turtle Rock Rolling Spikes': {
         'type': 'area', 'dungeon': 'Turtle Rock',
         'link': {
-            'Turtle Rock Big Hole': [],
+            'Turtle Rock Big Hole': [('item', 'somaria')],
             'Turtle Rock Map': [],
             'Turtle Rock Map Key': []}
     },
@@ -55,11 +54,17 @@ LOCATIONS = {
         'link': {
             'Turtle Rock Rolling Spikes': []}
     },
+    'Turtle Rock Trapped Stalfos': {
+        'type': 'area', 'dungeon': 'Turtle Rock',
+        'link': {
+            'Turtle Rock Big Hole': [('item', 'somaria')],
+            'Turtle Rock Hokkubokku Key Room': [('smallkey', 'Turtle Rock')]},
+    },
     'Turtle Rock Hokkubokku Key Room': {
         'type': 'area', 'dungeon': 'Turtle Rock',
         'link': {
-            'Turtle Rock Big Hole': [],
-            'Turtle Rock Chain Chomp Room': [('smallkey', ('Turtle Rock', 0))],
+            'Turtle Rock Trapped Stalfos': [('smallkey', 'Turtle Rock')],
+            'Turtle Rock Chain Chomp Room': [('smallkey', 'Turtle Rock')],
             'Turtle Rock First Hokkubokku Key': []}
     },
     'Turtle Rock First Hokkubokku Key': {
@@ -70,9 +75,9 @@ LOCATIONS = {
     'Turtle Rock Chain Chomp Room': {
         'type': 'area', 'dungeon': 'Turtle Rock',
         'link': {
-            'Turtle Rock Hokkubokku Key Room': [],
+            'Turtle Rock Hokkubokku Key Room': [('smallkey', 'Turtle Rock')],
             'Turtle Rock Chain Chomp Key': [],
-            'Turtle Rock Pipe Rooms': [('smallkey', ('Turtle Rock', 0))]}
+            'Turtle Rock Pipe Rooms': [('smallkey', 'Turtle Rock')]}
     },
     'Turtle Rock Chain Chomp Key': {
         'type': 'dungeonchest', 'dungeon': 'Turtle Rock',
@@ -82,9 +87,9 @@ LOCATIONS = {
     'Turtle Rock Pipe Rooms': {
         'type': 'area', 'dungeon': 'Turtle Rock',
         'link': {
-            'Turtle Rock Chain Chomp Room': [],
+            'Turtle Rock Chain Chomp Room': [('smallkey', 'Turtle Rock')],
             'Turtle Rock Second Hokkubokku Key': [],
-            'Turtle Rock Big Key': [('smallkey', ('Turtle Rock', 0))],
+            'Turtle Rock Big Key': [('smallkey', 'Turtle Rock')],
             'Turtle Rock Hokkubokku Room': []}
     },
     'Turtle Rock Second Hokkubokku Key': {
@@ -187,25 +192,37 @@ LOCATIONS = {
         'link': {
             'Turtle Rock Zoro Room': [],
             'Turtle Rock Switch Key': [],
-            'Turtle Rock Dark Room': [('smallkey', ('Turtle Rock', 0))]}
+            'Turtle Rock Dark Room North': [('smallkey', 'Turtle Rock')]}
     },
     'Turtle Rock Switch Key': {
-        'type': 'dungeonchest_nokey', 'dungeon': 'Turtle Rock',
+        'type': 'dungeonchest', 'dungeon': 'Turtle Rock',
         'link': {
             'Turtle Rock Switch Room': []}
     },
-    'Turtle Rock Dark Room': {
+    'Turtle Rock Dark Room North': {
         'type': 'area', 'dungeon': 'Turtle Rock',
         'link': {
-            'Turtle Rock Switch Room': [('and', [
-                ('item', 'lantern'), ('item', 'somaria')])],
-            'Turtle Rock Treasury': [('and', [
+            'Turtle Rock Switch Room': [('smallkey', 'Turtle Rock')],
+            'Turtle Rock Dark Room Maze': [('and', [
                 ('item', 'lantern'), ('item', 'somaria')])]}
+    },
+    'Turtle Rock Dark Room Maze': {
+        'type': 'area', 'dungeon': 'Turtle Rock',
+        'link': {
+            'Turtle Rock Dark Room North': [],
+            'Turtle Rock Dark Room South': []}
+    },
+    'Turtle Rock Dark Room South': {
+        'type': 'area', 'dungeon': 'Turtle Rock',
+        'link': {
+            'Turtle Rock Dark Room Maze': [('and', [
+                ('item', 'lantern'), ('item', 'somaria')])],
+            'Turtle Rock Treasury': []}
     },
     'Turtle Rock Treasury': {
         'type': 'area', 'dungeon': 'Turtle Rock',
         'link': {
-            'Turtle Rock Dark Room': [],
+            'Turtle Rock Dark Room South': [],
             'Turtle Rock Treasury Chest 1': [
                 ('item', 'mirrorshield'), ('item', 'byrna'), ('item', 'cape'),
                 ('settings', 'placement_advanced')],
@@ -219,25 +236,25 @@ LOCATIONS = {
                 ('item', 'mirrorshield'), ('item', 'byrna'), ('item', 'cape'),
                 ('settings', 'placement_advanced')],
             'Turtle Rock Fairy Exit Entrance (I)': [('item', 'bombs')],
-            'Turtle Rock Boss Maze': [('smallkey', ('Turtle Rock', 0))]}
+            'Turtle Rock Boss Maze': [('smallkey', 'Turtle Rock')]}
     },
     'Turtle Rock Treasury Chest 1': {
-        'type': 'dungeonchest_nokey', 'dungeon': 'Turtle Rock',
+        'type': 'dungeonchest', 'dungeon': 'Turtle Rock',
         'link': {
             'Turtle Rock Treasury': []}
     },
     'Turtle Rock Treasury Chest 2': {
-        'type': 'dungeonchest_nokey', 'dungeon': 'Turtle Rock',
+        'type': 'dungeonchest', 'dungeon': 'Turtle Rock',
         'link': {
             'Turtle Rock Treasury': []}
     },
     'Turtle Rock Treasury Chest 3': {
-        'type': 'dungeonchest_nokey', 'dungeon': 'Turtle Rock',
+        'type': 'dungeonchest', 'dungeon': 'Turtle Rock',
         'link': {
             'Turtle Rock Treasury': []}
     },
     'Turtle Rock Treasury Chest 4': {
-        'type': 'dungeonchest_nokey', 'dungeon': 'Turtle Rock',
+        'type': 'dungeonchest', 'dungeon': 'Turtle Rock',
         'link': {
             'Turtle Rock Treasury': []}
     },

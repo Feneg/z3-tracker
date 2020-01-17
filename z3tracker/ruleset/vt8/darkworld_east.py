@@ -131,8 +131,7 @@ LOCATIONS = {
                 ('rabbitbarrier', None),
                 ('or', [
                     ('and', [
-                        ('or', [
-                            ('settings', 'open'), ('settings', 'standard')]),
+                        ('settings', 'open'),
                         ('nosettings', 'entrance'),
                         ('item', 'hammer')]),
                     ('and', [
@@ -183,6 +182,7 @@ LOCATIONS = {
             'Ganon': [('and', [
                 ('item', 'mastersword'),
                 ('item', 'bow'),
+                ('or', [('item', 'firerod'), ('item', 'lantern')]),
                 ('or', [
                     ('item', 'silverarrows'),
                     ('settings', 'placement_advanced')])])]}

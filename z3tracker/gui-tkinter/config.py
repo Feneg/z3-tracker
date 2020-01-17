@@ -110,6 +110,7 @@ class ConfigWindow(tk.Toplevel):
             6, sec, 'Swords',
             ('Randomised', 'Assured', 'Vanilla', 'Swordless'),
             'swords')
+        self._make_check(7, sec, 'Enemiser', 'enemiser')
 
         buttonframe = ttk.Frame(self.frame)
         buttonframe.grid(column=0, columnspan=9, row=9, sticky=tk.E+tk.S)

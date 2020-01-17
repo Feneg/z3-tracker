@@ -190,10 +190,10 @@ LOCATIONS = {
             "Thieves' Town Boss": [('and', [
                 ('access', "Thieves' Town Attic"),
                 ('access', "Thieves' Town Blind's Cell")])],
-            "Thieves' Town Gauntlet": [('smallkey', ("Thieves' Town", 4))]}
+            "Thieves' Town Gauntlet": [('smallkey', "Thieves' Town")]}
     },
     "Thieves' Town First Hidden Key": {
-        'type': 'area', 'dungeon': "Thieves' Town",
+        'type': 'dungeonkey', 'dungeon': "Thieves' Town",
         'link': {
             "Thieves' Town Boss Hall": []}
     },
@@ -202,7 +202,7 @@ LOCATIONS = {
         'link': {
             "Thieves' Town Boss Hall": [('rabbitbarrier', None)],
             "Thieves' Town Second Hidden Key": [('rabbitbarrier', None)],
-            "Thieves' Town Attic": [('smallkey', ("Thieves' Town", 4))],
+            "Thieves' Town Attic": [('smallkey', "Thieves' Town")],
             "Thieves' Town Dungeons": []}
     },
     "Thieves' Town Second Hidden Key": {
@@ -225,7 +225,7 @@ LOCATIONS = {
         'type': 'area', 'dungeon': "Thieves' Town",
         'link': {
             "Thieves' Town Gauntlet": [],
-            "Thieves' Town Treasure Room": [('smallkey', ("Thieves' Town", 4))],
+            "Thieves' Town Treasure Room": [('smallkey', "Thieves' Town")],
             "Thieves' Town Blind's Cell": [('bigkey', "Thieves' Town")]}
     },
     "Thieves' Town Treasure Room": {

@@ -58,6 +58,7 @@ class DungeonObj(object):
 
         self.smallkeys = 0
         self.bigkey = False
+        self.tracker.keys[self.identifier] = {'small': 0, 'big': False}
         self.chests = 0
         self.reward = 'unknown'
         self.completed = False
@@ -75,6 +76,8 @@ class DungeonObj(object):
             if attr in ('smallkeys', 'chests'):
                 data[attr] = int(data[attr])
             self.set(attr, data[attr])
+        self.tracker.keys[self.identifier]['small'] = data['smallkeys']
+        self.tracker.keys[self.identifier]['big'] = data['bigkey']
 
     def save(self) -> dict:
         '''

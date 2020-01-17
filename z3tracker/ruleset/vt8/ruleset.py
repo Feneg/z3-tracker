@@ -112,6 +112,7 @@ class Location(object):
             - 'ganon': only used for the final bossfight
         map: map on which location is displayed (not for 'area' or 'interior')
         coord: coordinates of location on map (not for 'area' or 'interior')
+        keypools: key distribution in dungeon
         dungeon: parent dungeon (only for dungeon locations)
         link: locations to which this location connects, following the format
             {'linked location': {'requirement type': 'requirement', ...}};
@@ -150,7 +151,7 @@ class Location(object):
         if self.type == 'dungeon':
             self.map = location['map']
             self.coord = location['coord']
-            self.bossroad = location['bossroad']
+            self.keypools = location['keypools']
         if self.type.startswith('dungeon') and len(self.type) > 7:
             self.dungeon = location['dungeon']
         if self.type == 'area' and 'dungeon' in location:

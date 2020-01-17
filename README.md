@@ -10,13 +10,15 @@ z3-tracker is yet another tracker for The Legend of Zelda: A Link to the Past. I
 * location tracking,
 * entrance tracking.
 
+It supports every game mode except insanity entrance shuffle and boss shuffle.
+
 ### Installation
 
 z3-tracker is available for Linux, Windows and MacOS. Note that the main development platform is Linux, while MacOS support is entirely untested.
 
 ##### Linux
 
-Ensure that Python 3.6 or higher are available. z3-tracker also requires full tkinter support -- since tkinter is part of the core Python library, most distributions include it with the generic python3 package. If you are unsure, the quickest way to check is to try whether the command `python3 -c 'import tkinter.ttk'` is available.
+Ensure that Python 3.6 or higher are available. z3-tracker also requires full tkinter support -- since tkinter is part of the core Python library, most distributions include it. If you are unsure, the quickest way to check is to try whether the command `python3 -c 'import tkinter.ttk'` is available.
 
 You can run z3-tracker simply by running the z3-tracker.py script (i.e. `python3 z3-tracker.py`). Various other ways are available, including installing via pip (e.g. `pip3 install --user z3-tracker`).
 
@@ -44,11 +46,12 @@ In order to allow as much flexibility as possible in the placement of various pa
 
 * entrance shuffle (except insanity)
 * all four world states
-* no glitches; support for glitched modes is limited
+* non-glitched and glitched rulesets, although support for glitched modes is limited
 * basic and advanced item placement
 * swordless
 * all four dungeon item modes
 * all five goals
+* basic enemy shuffle (but not boss shuffle)
 * Ganon's Tower/Ganon crystal requirements
 
 ##### Items and dungeons
@@ -57,9 +60,7 @@ In order to allow as much flexibility as possible in the placement of various pa
 
 ![Dungeons](screenshots/dungeons.png)
 
-Everything should be self-explanatory. Left-click and right-click the various objects to activate, deactivate, increase of decrease them. Certain items are grouped together on the same spot. These reflect their grouping in the game's item menu. Some functionality in the dungeon tracker is only available under certain settings.
-
-Note that marking a dungeon as completed is not required to mark any locations dependent on the pendant/crystal of this dungeon (e.g. Master Sword Pedestal, Ganon's Tower) as available.
+Everything should be self-explanatory. Left-click and right-click the various objects to activate, deactivate, increase or decrease them. Certain items are grouped together on the same spot. These reflect their grouping in the game's item menu. Some functionality in the dungeon tracker like key counting is only shown when certain settings are selected.
 
 Crystal requirements can be set at the bottom right of the dungeon tracker window.
 
@@ -71,6 +72,17 @@ If entrance randomiser is activated, big round symbols denote overworld items. Y
 
 Other types of generic item locations are only shown if entrance randomiser is disabled.
 
+Colour coding:
+
+* Red: Location is not available.
+* Cyan: Location is available.
+* Rose: Location is logically available, but requires finishing at least one dungeon before it can be reached.
+* Green: Depending on item placement, location might be available. Or not.
+* Yellow: Item is not available, but visible.
+* Grey: Location has already been ticked off.
+
+If both rose and green would be appropriate then green takes precedence.
+
 ##### Entrance locations
 
 ![Dungeon Map](screenshots/dungeon_map.png)
@@ -79,10 +91,11 @@ Entrances are marked as small squares. Just like with item locations, they can b
 
 However, entrances also support two more actions:
 
-* Middle-clicking an entrance and then middle-clicking another (or the same) entrance will connect the entrance of the first-clicked location with the interior of the second-clicked one. This connection is established in both directions -- i.e. the interior is also connected to the entrance, but *no* connection is made between the entrance of the second location with the interior of the first one.
-* Right-clicking anywhere on the map aborts any first middle-click. If an entrance is right-clicked on, any connection that this entrance might have is removed.
+* Middle-clicking an entrance and then middle-clicking another (or the same) entrance will connect the entrance of the first-clicked location with the interior of the second-clicked one. If an entrance is right-clicked on, any connection that this entrance might have is removed.
 
-When moving the mouse over an entrance with an established connection, the borders of various other (or the same) entrances may change colour. The meaning of these colours are explained in the in-program help.
+When moving the mouse over an entrance with an established connection, the borders of various other (or the same) entrances may change colour. The meaning of these colours is explained in the in-program help.
+
+![Entrance Colours](screenshots/entrance_colours.png)
 
 ##### Dungeons
 
@@ -114,21 +127,20 @@ The Reset button clears all progress *and deletes the autosave*. Note that chang
 
 A project like this will always come with a plethora of bugs -- especially on weirder settings. However, there are a few areas where users should be especially careful:
 
-* There are still some minor UI bugs to be sorted out.
 * Inverted crossworld shuffle (and inverted in general) probably hass issues for locations which require Moon Pearl. This is just a matter of me forgetting some bush or pot somewhere.
 * Support for glitched modes is limited. I do not wish to claim to be an authority on the rules applying to these modes, so I only included glitches which are clearly part of the item randomiser code -- which means not very many, since that code is not designed to contain such information. Major glitches especially mostly boils down to frame clipping without Pegasus Shoes and Bottle Music.
-* Hearts and Bottles beyond the first one are currently not tracked. This is mostly an issue in basic item placement where certain dungeons and bosses require this. Some of these will therefore be marked as available earlier than they should.
+* Hearts and Bottles beyond the first one are currently not tracked. This is mostly an issue in basic item placement where certain dungeons and bosses require a certain number of hearts and bottles. Some of these will therefore be marked as available earlier than they should.
+* The rulesets for small keys don't strictly follow the randomiser's approach of 'most stupid use' possible, although it doesn't necessarily assume the smartest one either.
 * Insanity entrance shuffle is not supported. While z3-tracker internally knows the difference between going in and going out, I couldn't come up with a good user interface.
-* Don't put any trust into the dungeon availability display, especially in anything that deviates from the normal Standard/Open non-entranced-randomised game. My original idea didn't work out and I've yet to sit down and think of something else.
-* Possession of bombs isn't consistently checked (but the randomiser assumes them to always be available anyway).
-* Some options (notably most of the sword options) don't actually change the tracker behaviour.
+* Possession of bombs (or rather the ability to damage enemies) isn't consistently checked (but the randomiser assumes bombs to always be available anyway).
 * While the randomiser always requires Silver Arrows for defeating Ganon, z3-tracker only does so for basic item placement. This is by design.
+* In case somebody is wondering what the enemiser option is for: East Palace, Dark Palace and Ganon's Tower have slight changes in rules to account for the absence of Eyegores.
 * Many people who have only come in contact with the the Twitch-centred community surrounding the VT8 randomiser and their nomenclature will probably find some location names unfamiliar.
 
 Bugs may be reported on Github. Bug reports should include the contents of the config directory. If you're feeling adventurous, you can also take a look at the ruleset/vt8 directory. This is where the actual location rules reside. They should be easy to read.
 
 ### Credits
 
-- The authors of the entrance randomiser variant of the VT8 randomiser. (No worries, I didn't incorporate any code this time.)
+- The authors of various Zelda 3 randomisers of the last 30 years. Some of the ruleset code is based on very old data sets, some of it is gleaned from the current VT8 randomiser.
 - I also had a cursory look around other trackers before writing this one, most notably Orphis' (sadly unfinished) entrance tracker.
 - The artwork (owned by Nintendo) was copied from various places.

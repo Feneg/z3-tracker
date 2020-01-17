@@ -2,6 +2,7 @@
 Map tracker display
 '''
 
+import functools
 import importlib
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -84,6 +85,10 @@ class MapDisplay(tk.Toplevel):
         self.map.bind('<ButtonRelease-3>', lambda _: self._rightclick_button())
         self.imagefile = imagefile
 
+        # Set-up entrance tracker display.
+        self.map.bind('<Enter>', self._update_entrance_state)
+        self.map.bind('<Leave>', lambda _: self.helper.configure(background=''))
+
     def add_location_tracker(self, locationtracker) -> None:
         '''
         Add location tracker.
@@ -165,6 +170,14 @@ class MapDisplay(tk.Toplevel):
                 new, '<ButtonRelease-2>', lambda _: self._middleclick_button(name))
             self.map.tag_bind(
                 new, '<ButtonRelease-3>', lambda _: self._rightclick_button(name))
+
+    def _update_entrance_state(self, *args) -> None:
+        '''
+        Update display of entrance linking.
+        '''
+
+        self.helper.configure(
+            background=('yellow' if self.entrancetracker.armed else ''))
 
     def _hover(self, button: str) -> None:
         '''

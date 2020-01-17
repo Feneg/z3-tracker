@@ -54,10 +54,10 @@ class ItemTracker(dict):
         delayed_link = []
         for rawitem in ITEMS:
             item = ItemObj(
-                rawitem[0], rawitem[1], rawitem[2], tuple(rawitem[3].keys()),
-                tuple(rawitem[3].values()),
-                rawitem[4]['links'] if 'links' in rawitem[4] else {},
-                rawitem[4]['default'] if 'default' in rawitem[4] else 0,
+                rawitem[0], rawitem[1], rawitem[2], tuple(rawitem[4].keys()),
+                tuple(rawitem[4].values()), rawitem[3],
+                rawitem[5]['links'] if 'links' in rawitem[5] else {},
+                rawitem[5]['default'] if 'default' in rawitem[5] else 0,
                 worldtracker)
             try:
                 item.location = layout[item.identifier.lower()]

@@ -35,6 +35,7 @@ LOCATIONS = {
         'type': 'area', 'dungeon': "Ganon's Tower",
         'link': {
             "Ganon's Tower Lobby": [],
+            "Ganon's Tower Trap Room": [('smallkey', "Ganon's Tower")],
             "Ganon's Tower Torch Key": [('item', 'pegasus')],
             "Ganon's Tower Moving Bumper Key": []}
     },
@@ -54,7 +55,8 @@ LOCATIONS = {
         'link': {
             "Ganon's Tower Moving Bumper Key": [('item', 'hookshot')],
             "Ganon's Tower Stalfos Room": [('item', 'hookshot')],
-            "Ganon's Tower Map": [('item', 'hookshot'), ('item', 'pegasus')]}
+            "Ganon's Tower Map Room": [
+                ('item', 'hookshot'), ('item', 'pegasus')]}
     },
     "Ganon's Tower Stalfos Room": {
         'type': 'area', 'dungeon': "Ganon's Tower",
@@ -86,20 +88,42 @@ LOCATIONS = {
         'link': {
             "Ganon's Tower Stalfos Room": []}
     },
+    "Ganon's Tower Map Room": {
+        'type': 'area', 'dungeon': "Ganon's Tower",
+        'link': {
+            "Ganon's Tower Pit Room": [('item', 'hookshot')],
+            "Ganon's Tower Map": [('smallkey', "Ganon's Tower")],
+            "Ganon's Tower Double Switch": []}
+    },
     "Ganon's Tower Map": {
         'type': 'dungeonchest', 'dungeon': "Ganon's Tower",
         'link': {
-            "Ganon's Tower Pit Room": [('item', 'hookshot')],
-            "Ganon's Tower Switch Key": []}
+            "Ganon's Tower Map Room": []}
+    },
+    "Ganon's Tower Double Switch": {
+        'type': 'area', 'dungeon': "Ganon's Tower",
+        'link': {
+            "Ganon's Tower Map Room": [],
+            "Ganon's Tower Switch Key": [],
+            "Ganon's Tower Winder Room": [('smallkey', "Ganon's Tower")]}
     },
     "Ganon's Tower Switch Key": {
         'type': 'dungeonkey', 'dungeon': "Ganon's Tower",
         'link': {
-            "Ganon's Tower Map": [],
-            "Ganon's Tower Winder Room": [('item', 'hookshot')]}
+            "Ganon's Tower Double Switch": []}
     },
     "Ganon's Tower Winder Room": {
+        'type': 'area', 'dungeon': "Ganon's Tower",
+        'link': {
+            "Ganon's Tower Winder Room Key": [('item', 'hookshot')]}
+    },
+    "Ganon's Tower Winder Room Key": {
         'type': 'dungeonchest', 'dungeon': "Ganon's Tower",
+        'link': {
+            "Ganon's Tower Teleport Maze": [('smallkey', "Ganon's Tower")]}
+    },
+    "Ganon's Tower Teleport Maze": {
+        'type': 'area', 'dungeon': "Ganon's Tower",
         'link': {
             "Ganon's Tower Secret Treasure": [('item', 'bombs')],
             "Ganon's Tower Convergence": []}
@@ -138,6 +162,7 @@ LOCATIONS = {
         'type': 'area', 'dungeon': "Ganon's Tower",
         'link': {
             "Ganon's Tower Lobby": [],
+            "Ganon's Tower Torch Key Room": [('smallkey', "Ganon's Tower")],
             "Ganon's Tower Trap Chest 1": [],
             "Ganon's Tower Trap Chest 2": [],
             "Ganon's Tower Tile Room": [('item', 'somaria')]}
@@ -156,7 +181,7 @@ LOCATIONS = {
         'type': 'dungeonchest', 'dungeon': "Ganon's Tower",
         'link': {
             "Ganon's Tower Trap Room": [],
-            "Ganon's Tower Torch Race": []}
+            "Ganon's Tower Torch Race": [('smallkey', "Ganon's Tower")]}
     },
     "Ganon's Tower Torch Race": {
         'type': 'area', 'dungeon': "Ganon's Tower",
@@ -197,14 +222,14 @@ LOCATIONS = {
     "Ganon's Tower Obstacle Course Key": {
         'type': 'dungeonkey', 'dungeon': "Ganon's Tower",
         'link': {
-            "Ganon's Tower Convergence": []}
+            "Ganon's Tower Convergence": [('smallkey', "Ganon's Tower")]}
     },
 
     "Ganon's Tower Convergence": {
         'type': 'area', 'dungeon': "Ganon's Tower",
         'link': {
             "Ganon's Tower Anti-Fairy Room": [],
-            "Ganon's Tower Treasure": []}
+            "Ganon's Tower Treasure Room": []}
     },
     "Ganon's Tower Anti-Fairy Room": {
         'type': 'dungeonchest', 'dungeon': "Ganon's Tower",
@@ -216,48 +241,56 @@ LOCATIONS = {
         'type': 'area', 'dungeon': "Ganon's Tower",
         'link': {
             "Ganon's Tower Big Key Room": [],
-            "Ganon's Tower Treasure": []}
+            "Ganon's Tower Treasure Room": []}
     },
     "Ganon's Tower Big Key Room": {
         'type': 'area', 'dungeon': "Ganon's Tower",
         'link': {
             "Ganon's Tower Armos On Ice": [],
-            "Ganon's Tower Big Key Chest 1": [],
-            "Ganon's Tower Big Key Chest 2": [],
-            "Ganon's Tower Big Key Chest 3": []}
+            "Ganon's Tower Big Key": [],
+            "Ganon's Tower Big Key Chest Left": [],
+            "Ganon's Tower Big Key Chest Right": []}
     },
-    "Ganon's Tower Big Key Chest 1": {
+    "Ganon's Tower Big Key": {
         'type': 'dungeonchest', 'dungeon': "Ganon's Tower",
         'link': {
             "Ganon's Tower Big Key Room": []}
     },
-    "Ganon's Tower Big Key Chest 2": {
+    "Ganon's Tower Big Key Chest Left": {
         'type': 'dungeonchest', 'dungeon': "Ganon's Tower",
         'link': {
             "Ganon's Tower Big Key Room": []}
     },
-    "Ganon's Tower Big Key Chest 3": {
+    "Ganon's Tower Big Key Chest Right": {
         'type': 'dungeonchest', 'dungeon': "Ganon's Tower",
         'link': {
             "Ganon's Tower Big Key Room": []}
     },
-    "Ganon's Tower Treasure": {
-        'type': 'dungeonchest_nokey', 'dungeon': "Ganon's Tower",
+    "Ganon's Tower Treasure Room": {
+        'type': 'area', 'dungeon': "Ganon's Tower",
         'link': {
+            "Ganon's Tower Treasure": [('bigkey', "Ganon's Tower")],
             "Ganon's Tower Convergence": [],
             "Ganon's Tower Torch Key Room": []}
+    },
+    "Ganon's Tower Treasure": {
+        'type': 'area', 'dungeon': "Ganon's Tower",
+        'link': {
+            "Ganon's Tower Treasure Room": []}
     },
 
     "Ganon's Tower Ascent 1": {
         'type': 'area', 'dungeon': "Ganon's Tower",
         'link': {
             "Ganon's Tower Lobby": [],
-            "Ganon's Tower Ascent 2": [('item', 'bow')]}
+            "Ganon's Tower Ascent 2": [
+                ('item', 'bow'), ('settings', 'enemiser')]}
     },
     "Ganon's Tower Ascent 2": {
         'type': 'area', 'dungeon': "Ganon's Tower",
         'link': {
-            "Ganon's Tower Ascent 1": [('item', 'bow')],
+            "Ganon's Tower Ascent 1": [
+                ('item', 'bow'), ('settings', 'enemiser')],
             "Ganon's Tower Ascent 3": [
                 ('item', 'lantern'), ('item', 'firerod')]}
     },
@@ -268,7 +301,7 @@ LOCATIONS = {
             "Ganon's Tower Helmasaur Key": [],
             "Ganon's Tower Helmasaur Chest 1": [],
             "Ganon's Tower Helmasaur Chest 2": [],
-            "Ganon's Tower Ascent 4": []}
+            "Ganon's Tower Ascent 4": [('smallkey', "Ganon's Tower")]}
     },
     "Ganon's Tower Helmasaur Key": {
         'type': 'dungeonkey', 'dungeon': "Ganon's Tower",
@@ -290,7 +323,7 @@ LOCATIONS = {
         'link': {
             "Ganon's Tower Ascent 3": [],
             "Ganon's Tower Rabbit Beam Chest": [],
-            "Ganon's Tower Ascent 5": []}
+            "Ganon's Tower Ascent 5": [('smallkey', "Ganon's Tower")]}
     },
     "Ganon's Tower Rabbit Beam Chest": {
         'type': 'dungeonchest_nokey', 'dungeon': "Ganon's Tower",

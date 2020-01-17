@@ -23,6 +23,7 @@ class ItemObj(object):
         length: number of item progressions
         displayname: name(s) displayed in UI
         icon: path to image file(s) associated with item
+        disabled: black&white conversion
         link: items (and requirement) linked with this item
         linkitems: item objects linked to this item
         default: default numer of items in inventory
@@ -32,7 +33,7 @@ class ItemObj(object):
 
     def __init__(self, identifier: str, location: typing.Sequence[int],
                  length: int, displayname: typing.Sequence[str],
-                 icon: typing.Sequence[str],
+                 icon: typing.Sequence[str], disabled: typing.Sequence[int],
                  links: typing.Mapping[str, typing.Sequence[int]],
                  default: int, tracker):
         '''
@@ -42,6 +43,7 @@ class ItemObj(object):
             length: number of progressions in item
             displayname: name(s) of item displayed on tracker GUI
             icon: icon(s) used on tracker GUI
+            disabled: black&white conversion
             links: items linked with posession of item
             default: initial item progression
             tracker: world state tracker
@@ -52,6 +54,7 @@ class ItemObj(object):
         self.length = length
         self.displayname = displayname
         self.icon = tuple(image(i) for i in icon)
+        self.disabled = disabled
         self.link = links
         self.linkitems = {}
         self.default = default

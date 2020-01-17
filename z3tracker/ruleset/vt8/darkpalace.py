@@ -35,7 +35,7 @@ LOCATIONS = {
         'link': {
             'Dark Palace Entrance (E)': [],
             'Dark Palace First Key': [],
-            'Dark Palace Centre': [('smallkey', ('Dark Palace', 6))],
+            'Dark Palace Centre': [('smallkey', 'Dark Palace')],
             'Dark Palace Hidden Path': [
                 ('item', 'bombs'), ('item', 'pegasus')]}
     },
@@ -48,7 +48,8 @@ LOCATIONS = {
         'type': 'area', 'dungeon': 'Dark Palace',
         'link': {
             'Dark Palace Front': [('item', 'bombs'), ('item', 'pegasus')],
-            'Dark Palace Moving Floor': [('item', 'bow')]}
+            'Dark Palace Moving Floor': [
+                ('item', 'bow'), ('settings', 'enemiser')]}
     },
     'Dark Palace Moving Floor': {
         'type': 'area', 'dungeon': 'Dark Palace',
@@ -76,13 +77,13 @@ LOCATIONS = {
             'Dark Palace Big Key Drop': [('item', 'bombs')],
             'Dark Palace Stalfos Arena': [],
             'Dark Palace Targetting Chest': [],
-            'Dark Palace Back': [('smallkey', ('Dark Palace', 5))]}
+            'Dark Palace Back': [('smallkey', 'Dark Palace')]}
     },
     'Dark Palace Big Key Drop': {
         'type': 'area', 'dungeon': 'Dark Palace',
         'link': {
             'Dark Palace Stalfos Arena': [],
-            'Dark Palace Big Key': [('smallkey', ('Dark Palace', 6))]}
+            'Dark Palace Big Key': [('smallkey', 'Dark Palace')]}
     },
     'Dark Palace Big Key': {
         'type': 'dungeonchest', 'dungeon': 'Dark Palace',
@@ -109,7 +110,7 @@ LOCATIONS = {
     'Dark Palace Back': {
         'type': 'area', 'dungeon': 'Dark Palace',
         'link': {
-            'Dark Palace Maze Entrance': [('smallkey', ('Dark Palace', 8))],
+            'Dark Palace Maze Entrance': [('smallkey', 'Dark Palace')],
             'Dark Palace Treasury': [
                 ('item', 'lantern'),
                 ('and', [
@@ -197,7 +198,7 @@ LOCATIONS = {
         'type': 'area', 'dungeon': 'Dark Palace',
         'link': {
             'Dark Palace Gauntlet Door': [('item', 'hammer')],
-            'Dark Palace Boss': [('smallkey', ('Dark Palace', 8))]}
+            'Dark Palace Boss': [('smallkey', 'Dark Palace')]}
     },
     'Dark Palace Boss': {
         'type': 'dungeonboss', 'dungeon': 'Dark Palace',

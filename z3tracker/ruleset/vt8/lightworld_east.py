@@ -234,7 +234,7 @@ LOCATIONS = {
         'link': {
             'East Palace Interior': [],
             'East Palace Hidden Key': [],
-            'East Palace Big Key': [('smallkey', ('East Palace', 0))]}
+            'East Palace Big Key': [('smallkey', 'East Palace')]}
     },
     'East Palace Hidden Key': {
         'type': 'dungeonkey', 'dungeon': 'East Palace',
@@ -260,7 +260,7 @@ LOCATIONS = {
         'link': {
             'East Palace Boss Door': [],
             'East Palace Eyegore Key': [],
-            'East Palace Gauntlet': [('smallkey', ('East Palace', 0))]}
+            'East Palace Gauntlet': [('smallkey', 'East Palace')]}
     },
     'East Palace Eyegore Key': {
         'type': 'dungeonkey', 'dungeon': 'East Palace',
@@ -274,7 +274,7 @@ LOCATIONS = {
                 ('item', 'lantern'),
                 ('and', [
                     ('settings', 'placement_advanced'), ('item', 'firerod')])],
-            'East Palace Boss': [('item', 'bow')]}
+            'East Palace Boss': [('item', 'bow'), ('settings', 'enemiser')]}
     },
     'East Palace Boss': {
         'type': 'dungeonboss', 'dungeon': 'East Palace',

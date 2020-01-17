@@ -26,6 +26,7 @@ DEFAULT = {
     'dungeon_items': ('Standard', str),
     'goal': ('Defeat Ganon', str),
     'swords': ('Randomised', str),
+    'enemiser': (False, bool),
 }
 
 
@@ -37,4 +38,5 @@ OVERWRITE = {
     '0.9.4': set(),
     '0.9.5': set(),
     '0.9.6': set(),
+    '0.9.7': set(),
 }

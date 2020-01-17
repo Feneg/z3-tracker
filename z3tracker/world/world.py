@@ -34,7 +34,7 @@ class _SmallKeyCheck(Exception):
     Raised when small key door is encountered.
     '''
 
-    def __init__(self, dungeon: str, requirement: int):
+    def __init__(self, dungeon: str):
         '''
         Args:
             requirement: number of required key chests
@@ -42,7 +42,6 @@ class _SmallKeyCheck(Exception):
 
         super().__init__()
         self.dungeon = dungeon
-        self.required = requirement
 
 
 class _BigKeyCheck(Exception):
@@ -101,7 +100,9 @@ class Tracker(object):
         self.ruleset = ruleset.Ruleset()
         self._make_settings()
         for dungeon in self.ruleset.dungeons:
-            self.keys[dungeon] = {'small': 0, 'big': False}
+            if (dungeon not in self.keys or 'small' not in self.keys[dungeon] or
+                'big' not in self.keys[dungeon]):
+                self.keys[dungeon] = {'small': 0, 'big': False}
         self.rulecheck()
 
     def _make_settings(self) -> None:
@@ -113,6 +114,8 @@ class Tracker(object):
         if CONFIG['entrance_randomiser']:
             self.settings.add('entrance')
         self.settings.add(CONFIG['world_state'].lower())
+        if 'standard' in self.settings:
+            self.settings.add('open')
         self.settings.add('glitches_{0:s}'.format(
             {'None': 'none', 'Overworld Glitches': 'overworld',
              'Major Glitches': 'major'}[CONFIG['glitch_mode']]))
@@ -132,6 +135,8 @@ class Tracker(object):
              'Triforce Hunt': 'triforce'}[CONFIG['goal']]))
         if CONFIG['swords'] == 'Swordless':
             self.settings.add('swordless')
+        if CONFIG['enemiser']:
+            self.settings.add('enemiser')
         self._set_startpoint()
 
     def _set_startpoint(self) -> None:
@@ -246,31 +251,25 @@ class Tracker(object):
                 if mapd.button[button]['type'] == 'dungeon':
                     dungeonchecks = []
                     for loc in self.ruleset.dungeons[button]:
-                        if self.ruleset[loc].type != 'area':
+                        if (self.ruleset[loc].type.startswith('dungeonchest')
+                            and not loc.endswith(' Boss Item')):
                             dungeonchecks.append(loc in available)
                     if all(dungeonchecks):
                         try:
                             clearable = available[
-                                '{0:s} Boss'.format(button)]
-                        except KeyError:
+                                '{0:s} Big Key'.format(button)]
+                        except KeyError:  # Castle Tower
                             clearable = available[
-                                '{0:s} Entrance (I)'.format(button)]
-                            if (clearable == 'available' and
-                                not self._check_dungeon_state(button)):
-                                clearable = 'indirect'
+                                '{0:s} Second Chest'.format(button)]
                     elif any(dungeonchecks):
                         clearable = 'visible'
                     else:
                         clearable = 'unavailable'
-                    if not self._check_bossfight(button):
-                        finishable = 'unavailable'
-                    elif '{0:s} Boss'.format(button) in available:
+                    if '{0:s} Reward'.format(button) in available:
                         finishable = available['{0:s} Boss'.format(button)]
                         if (finishable == 'available' and
                             clearable == 'indirect'):
                             finishable = 'indirect'
-                    elif self.ruleset[button].bossroad in available:
-                        finishable = 'visible'
                     else:
                         finishable = 'unavailable'
                     state = [clearable, finishable]
@@ -312,6 +311,9 @@ class Tracker(object):
         visible = set()
         delayed = {'common': [], 'smallkey': [], 'bigkey': [], 'boss': [],
                    'reward': [], 'maybe': []}
+        keychecked = {loc: set() for loc in self.ruleset.dungeons}
+        hadkey = dict.fromkeys(self.ruleset.dungeons.keys(), False)
+        maybedungeons = set()
 
         # Go through locations.
         while reachable:
@@ -332,6 +334,43 @@ class Tracker(object):
             # Add fixed keys.
             if self.ruleset[current].type == 'dungeonkey':
                 keys[self.ruleset[current].dungeon]['small'] += 1
+                hadkey[self.ruleset[current].dungeon] = True
+
+            # Add chest keys.
+            if (not 'random_smallkey' in self.settings and
+                self.ruleset[current].type.startswith('dungeonchest') and
+                self.ruleset[self.ruleset[current].dungeon].type == 'dungeon'):
+                keypools = self.ruleset[self.ruleset[current].dungeon].keypools
+                spheres_defined = False
+                for sphere in keypools:
+                    if (sphere['type'] != 'small' or
+                        current not in sphere['chests']):
+                        continue
+                    for s in sphere['settings']:
+                        if s not in self.settings:
+                            break
+                    else:
+                        spheres_defined = True
+                        remaining = sum(
+                            loc not in keychecked[self.ruleset[current].dungeon]
+                            for loc in sphere['chests'])
+                        if remaining <= sphere['keys']:
+                            keys[self.ruleset[current].dungeon]['small'] += 1
+                            hadkey[self.ruleset[current].dungeon] = True
+                            break
+                if not spheres_defined:
+                    total = self.ruleset.dungeons[
+                        self.ruleset[current].dungeon].keylocations()
+                    if current in total:
+                        remaining = sum(
+                            loc not in keychecked[self.ruleset[current].dungeon]
+                            for loc in total)
+                        totalkeys = dungeonlists.DUNGEONS[
+                            self.ruleset[current].dungeon][1]
+                        if remaining <= totalkeys:
+                            keys[self.ruleset[current].dungeon]['small'] += 1
+                            hadkey[self.ruleset[current].dungeon] = True
+                keychecked[self.ruleset[current].dungeon].add(current)
 
             # Go through links.
             for link in self.ruleset[current].link:
@@ -346,9 +385,10 @@ class Tracker(object):
                     ret, addstate = self._parse_requirement(
                         self.ruleset[current].link[link], state, None, keys)
                 except _DelayCheck as err:
-                    delayed[err.delayclass].append(
-                        (link,
-                         _Connection(self.ruleset[current].link[link], state)))
+                    newlink = (link, _Connection(
+                        self.ruleset[current].link[link], state))
+                    if newlink not in delayed[err.delayclass]:
+                        delayed[err.delayclass].append(newlink)
                     ret = False
                 if ret:
                     for retstate in addstate:
@@ -359,7 +399,9 @@ class Tracker(object):
                             newstate.remove(s[0])
                         elif not (len(s) > 1 and s[1] == 'dis'):
                             newstate.add(s[0])
-                    reachable.append(_Connection(link, newstate))
+                    newlink = _Connection(link, newstate)
+                    if newlink not in reachable:
+                        reachable.append(newlink)
 
             # Check visible locations.
             for link in self.ruleset[current].visible:
@@ -381,9 +423,20 @@ class Tracker(object):
                                 current, state, available, keys)
                         except _SmallKeyCheck as err:
                             ret = self._check_smallkeys(
-                                available, err.dungeon, err.required)
+                                available, err.dungeon, keys)
+                            if not ret and hadkey[err.dungeon]:
+                                ret = True
+                                addstate = ('maybe;add',)
+                                maybedungeons.add(err.dungeon)
                         except _BigKeyCheck as err:
-                            ret = self._check_bigkey(available, err.dungeon)
+                            avail, maybe = self._check_bigkey(
+                                available, err.dungeon)
+                            ret = False
+                            if avail or maybe:
+                                ret = True
+                            if ((not avail and maybe) or
+                                err.dungeon in maybedungeons):
+                                addstate = ('maybe;add',)
                         if ret:
                             for retstate in addstate:
                                 s = retstate.split(';')
@@ -393,8 +446,10 @@ class Tracker(object):
                                     newstate.remove(s[0])
                                 elif not (len(s) > 1 and s[1] == 'dis'):
                                     newstate.add(s[0])
-                            reachable.append(_Connection(
-                                delayed[delayclass].pop(idx)[0], newstate))
+                            newlink = _Connection(
+                                delayed[delayclass].pop(idx)[0], newstate)
+                            if newlink not in reachable:
+                                reachable.append(newlink)
                             break
                     if reachable:
                         break
@@ -408,6 +463,8 @@ class Tracker(object):
             collector=any) -> (bool, list):
         '''
         Parse generic link requirement object.
+
+        When more than one requirement is given, this function defaults to OR!
 
         Args:
             req: [('requirement type', requirement object)]
@@ -468,8 +525,9 @@ class Tracker(object):
                 if not nodelay:
                     raise _DelayCheck('common')
                 result.append(robj in nodelay)
-                if result[-1] and nodelay[robj] in ('maybe', 'boss'):
-                    addstate.append('{0:s};add'.format(nodelay[robj]))
+                if result[-1] and nodelay[robj] in ('maybe', 'indirect'):
+                    addstate.append('{0:s};add'.format(
+                        'maybe' if nodelay[robj] == 'maybe' else 'boss'))
 
             # glitch
             elif rtype == 'glitch':
@@ -515,13 +573,13 @@ class Tracker(object):
                     raise _DelayCheck('smallkey')
                 else:
                     if 'random_smallkey' in self.settings:
-                        if keys[robj[0]]['small'] > 0:
-                            keys[robj[0]]['small'] -= 1
+                        if keys[robj]['small'] > 0:
+                            keys[robj]['small'] -= 1
                             result.append(True)
                         else:
                             result.append(False)
                     else:
-                        raise _SmallKeyCheck(*robj)
+                        raise _SmallKeyCheck(robj)
 
             # bigkey
             elif rtype == 'bigkey':
@@ -541,26 +599,35 @@ class Tracker(object):
                 if robj == 'ganon':
                     if 'goal_ganon' in self.settings:
                         sub = self._parse_requirement(
-                                [('crystals', 'ganon'),
-                                 ('access', "Ganon's Tower Reward")],
+                                [('and', [
+                                    ('crystals', 'ganon'),
+                                    ('access', "Ganon's Tower Reward")])],
                                 state, nodelay, keys, all)
                     elif 'goal_fastganon' in self.settings:
                         sub = self._parse_requirement(
                                 [('crystals', 'ganon')], state, nodelay, keys)
                     elif 'goal_dungeons' in self.settings:
                         sub = self._parse_requirement(
-                                [('crystals', 'ganon'), ('pendant', 'courage'),
-                                 ('pendant', 'power'), ('pendant', 'wisdom')],
+                                [('and', [
+                                    ('crystals', 'ganon'),
+                                    ('pendant', 'courage'),
+                                    ('pendant', 'power'),
+                                    ('pendant', 'wisdom')])],
                                 state, nodelay, keys, all)
                     elif 'goal_pedestal' in self.settings:
                         sub = self._parse_requirement(
-                                [('pendant', 'courage'), ('pendant', 'power'),
-                                 ('pendant', 'wisdom')],
+                                [('and', [
+                                    ('pendant', 'courage'),
+                                    ('pendant', 'power'),
+                                    ('pendant', 'wisdom')])],
                                 state, nodelay, keys, all)
                     elif 'goal_triforce' in self.settings:
                         sub = self._parse_requirement(
-                                [('crystals', 'ganon'), ('pendant', 'courage'),
-                                 ('pendant', 'power'), ('pendant', 'wisdom')],
+                                [('and', [
+                                    ('crystals', 'ganon'),
+                                    ('pendant', 'courage'),
+                                    ('pendant', 'power'),
+                                    ('pendant', 'wisdom')])],
                                 state, nodelay, keys, all)
                     else:
                         assert False
@@ -608,28 +675,30 @@ class Tracker(object):
 
     def _check_smallkeys(
             self, availability: typing.Sequence[str], dungeon: str,
-            requirement: int) -> bool:
+            keys: dict) -> bool:
         '''
         Check number of available small keys.
 
         Args:
             availability: list of already available locations
             dungeon: dungeon name
-            requirement: number of required key chests
+            keys: {dungeon name: number of available keys}
         Returns:
             bool: True if key requirement is met
         '''
 
-        keychests = 0
-        for loc in self.ruleset.dungeons[dungeon].keylocations():
-            if loc in availability:
-                keychests += 1
-        if keychests < requirement:
-            return False
-        return True
+        if 'random_smallkey' in self.settings:
+            addkeys = self.keys[dungeon]['small']
+        else:
+            addkeys = 0
+        if keys[dungeon]['small'] + addkeys > 0:
+            keys[dungeon]['small'] -= 1
+            return True
+        return False
 
     def _check_bigkey(
-            self, availability: typing.Sequence[str], dungeon: str) -> bool:
+            self, availability: typing.Sequence[str],
+            dungeon: str) -> (bool, bool):
         '''
         Check number of available small keys.
 
@@ -638,26 +707,23 @@ class Tracker(object):
             dungeon: dungeon name
         Returns:
             bool: True if key requirement is met
+            bool: True if key requirement might be met
         '''
 
-        return self._check_smallkeys(
-            availability, dungeon,
-            len(self.ruleset.dungeons[dungeon].keylocations()))
-
-    def _check_bossfight(self, dungeon: str) -> bool:
-        '''
-        Check whether a bossfight can be finished with current equipment.
-
-        Args:
-            dungeon: name of dungeon
-        Returns:
-            bool: True if fight is finishable
-        '''
-
-        requirement = self.ruleset[
-            '{0:s} Boss'.format(dungeon)].link[
-                '{0:s} Boss Item'.format(dungeon)]
-        return self._parse_requirement(requirement, [], None)
+        if 'random_bigkey' in self.settings:
+            return self.keys[dungeon]['big']
+        for pool in self.ruleset[dungeon].keypools:
+            if pool['type'] == 'big':
+                bigpool = pool['chests']
+                break
+        else:
+            bigpool = {
+                loc for loc in self.ruleset.dungeons[dungeon]
+                if self.ruleset[loc].type == 'dungeonchest'}
+        avail = tuple(loc in availability for loc in bigpool)
+        ret = all(avail)
+        maybe = any(avail)
+        return ret, maybe
 
     def _check_medallion(self, dungeon) -> (bool, bool):
         '''
@@ -701,29 +767,39 @@ class Tracker(object):
             str: '', 'maybe' or 'boss'
         '''
 
+        # Sanity check
         assert reward in (
             'courage', 'power', 'wisdom', 'fairy', 'ganonstower', 'ganon')
+
+        # Conversion between ruleset files and reward names.
         conversion = {
             'courage': 'courage', 'power': 'powerwisdom',
             'wisdom': 'powerwisdom', 'fairy': '56crystal',
             'ganonstower': 'crystal', 'ganon': 'crystal'}
+
+        # Get current dungeons for desired reward type.
         rewarddungeons = []
+        knowndungeons = []
         for dungeon in self.dungeons:
             if not 'reward' in self.dungeons[dungeon]['features']:
                 continue
             if self.dungeons[dungeon]['reward'] == conversion[reward]:
                 rewarddungeons.append(dungeon)
+                knowndungeons.append(dungeon)
             if (reward.startswith('ganon') and
                 self.dungeons[dungeon]['reward'] == '56crystal'):
                 rewarddungeons.append(dungeon)
+                knowndungeons.append(dungeon)
+
+        # Check whether all required reward locations are known.
         required = {
             'courage': 1, 'power': 2, 'wisdom': 2, 'fairy': 2,
             'ganonstower': self.crystals['tower'],
             'ganon': self.crystals['ganon']}
         if required[reward] < 0:
-            unknown_number = True
+            unknown_requirement = True
         else:
-            unknown_number = False
+            unknown_requirement = False
         total = dict.fromkeys(
             ('courage', 'powerwisdom', '56crystal', 'crystal'), 0)
         for dungeon in self.dungeons:
@@ -731,7 +807,11 @@ class Tracker(object):
                 total[self.dungeons[dungeon]['reward']] += 1
                 if self.dungeons[dungeon]['reward'] == '56crystal':
                     total['crystal'] += 1
+
+        # Check if enough rewards are known.
         enough = len(rewarddungeons) >= required[reward]
+
+        # If not enough, count including dungeons with unknown reward.
         if not enough:
             rewarddungeons = []
             for dungeon in self.dungeons:
@@ -743,12 +823,21 @@ class Tracker(object):
                 if (reward.startswith('ganon') and
                     self.dungeons[dungeon]['reward'] == '56crystal'):
                     rewarddungeons.append(dungeon)
+
+        # Check if there is enough now.
         locations = []
         maybes = 0
         boss_required = 0
         for dungeon in rewarddungeons:
+            if self._check_dungeon_state(dungeon):
+                locations.append(True)
+                continue
             res, add = self._parse_requirement(
                 [('access', '{0:s} Reward'.format(dungeon))], [], available)
+            if not res and dungeon in knowndungeons:
+                ret = False
+                fail_guaranteed = True
+                break
             locations.append(res)
             for retstate in add:
                 if retstate.split(';')[0] == 'maybe':
@@ -756,6 +845,10 @@ class Tracker(object):
                     break
             if not self._check_dungeon_state(dungeon):
                 boss_required += 1
+        else:
+            fail_guaranteed = False
+
+        # Add all information together.
         addflag = ''
         if enough:
             ret = sum(locations) >= required[reward]
@@ -763,13 +856,21 @@ class Tracker(object):
                 addflag = 'boss'
             if required[reward] + maybes > total[conversion[reward]]:
                 addflag = 'maybe'
-            if sum(locations) < total[conversion[reward]] and unknown_number:
-                addflag = 'maybe'
-        else:
-            ret = all(locations)
+            if unknown_requirement:
+                if sum(locations) - maybes < 7:
+                    addflag = 'maybe'
+                elif boss_required:
+                    addflag = 'boss'
+        elif not fail_guaranteed:
+            ret = sum(locations) >= required[reward]
             if not ret:
-                ret = unknown_number
+                ret = unknown_requirement
                 addflag = 'maybe'
+            else:
+                if all(locations):
+                    addflag = 'boss'
+                else:
+                    addflag = 'maybe'
         return ret, addflag
 
     def total_chests(self, dungeon: str) -> int:
@@ -855,6 +956,15 @@ class _Connection(object):
         super().__init__()
         self.name = init
         self.state = state
+
+    def __eq__(self, other):
+        '''
+        Equality check
+
+        This will raise an error if 'other' is not '_Connection' type.
+        '''
+
+        return self.get() == other.get()
 
     def get(self) -> (str, tuple):
         '''
