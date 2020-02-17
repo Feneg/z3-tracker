@@ -109,13 +109,17 @@ LOCATIONS = {
         'type': 'interior',
         'link': {
             'Desert Palace Main Entrance Entrance (E)': [],
-            'Desert Palace Interior': [('rabbitbarrier', None)]}
+            'Desert Palace Interior': [('and', [
+                ('rabbitbarrier', None),
+                ('or', [('nosettings', 'majoronly'), ('item', 'pegasus')])])]}
     },
     'Desert Palace Side Entrance Entrance (I)': {
         'type': 'interior',
         'link': {
             'Desert Palace Side Entrance Entrance (E)': [],
-            'Desert Palace Interior': [('rabbitbarrier', None)]}
+            'Desert Palace Interior': [('and', [
+                ('rabbitbarrier', None),
+                ('or', [('nosettings', 'majoronly'), ('item', 'pegasus')])])]}
     },
     'Desert Palace Side Entrance Entrance (E)': {
         'type': 'entrance_dungeon', 'map': 'light', 'coord': (75, 527),
@@ -165,7 +169,10 @@ LOCATIONS = {
         'type': 'interior',
         'link': {
             'Desert Palace Back Entrance Entrance (E)': [],
-            'Desert Palace Interior': [('rabbitbarrier', None)]}
+            'Desert Palace Interior': [('and', [
+                ('rabbitbarrier', None),
+                ('or', [
+                    ('nosettings', 'majoronly'), ('item', 'pegasus')])])]}
     },
     'Desert Palace Back Entrance Entrance (E)': {
         'type': 'entrance_dungeon', 'map': 'light', 'coord': (23, 527),

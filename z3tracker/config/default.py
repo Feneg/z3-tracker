@@ -27,6 +27,8 @@ DEFAULT = {
     'goal': ('Defeat Ganon', str),
     'swords': ('Randomised', str),
     'enemiser': (False, bool),
+
+    'majoronly': (False, bool),
 }
 
 
@@ -39,4 +41,5 @@ OVERWRITE = {
     '0.9.5': set(),
     '0.9.6': set(),
     '0.9.7': set(),
+    '0.9.8': set(),
 }

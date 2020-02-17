@@ -5,6 +5,8 @@ Rules management
 import importlib
 import typing
 
+from .major import MAJORLOCATIONS
+
 LOCATIONIMPORTS = (
     'castle', 'darkpalace', 'darkworld_east', 'darkworld_north',
     'darkworld_south', 'deathmountain', 'desert', 'dungeons', 'ganonstower',
@@ -18,7 +20,7 @@ for locimp in LOCATIONIMPORTS:
     LOCATIONS.update(addloc.LOCATIONS)
 del addloc, locimp
 
-__all__ = 'Ruleset',
+__all__ = 'Ruleset', 'MAJORLOCATIONS'
 
 
 class Ruleset(dict):
@@ -42,14 +44,16 @@ class Ruleset(dict):
                 if self[loc].dungeon not in self.dungeons:
                     self.dungeons[self[loc].dungeon] = Dungeon()
                 self.dungeons[self[loc].dungeon][loc] = self[loc]
+        assert all(loc in self for loc in MAJORLOCATIONS)
 
-    def locations(self, gametype: str, maptype: str) -> dict:
+    def locations(self, gametype: str, maptype: str, majoronly: bool) -> dict:
         '''
         Return a list of locations to be displayed on a map.
 
         Args:
             gametype: 'item' or 'entrance'
             maptype: 'light' or 'dark'
+            majoronly: only return major item locations
         Returns:
             dict: {
                 'location name': {'map': str, 'coord': (int, int), 'type': str}}
@@ -69,7 +73,15 @@ class Ruleset(dict):
                      'ganon')
         ret = {}
         for loc in self:
-            if self[loc].type in valid and self[loc].map == maptype:
+            majorcheck = (
+                not majoronly or loc in MAJORLOCATIONS or
+                self[loc].type in (
+                    'item_retro', 'ganon', 'entrance', 'entrance_shop',
+                    'entrance_dungeon', 'dungeon'))
+            displaycheck = (
+                self[loc].type in valid and self[loc].map == maptype and
+                majorcheck)
+            if displaycheck:
                 ret[loc] = {
                     'map': self[loc].map, 'coord': self[loc].coord,
                     'type': self[loc].type}
@@ -172,7 +184,7 @@ class Dungeon(dict):
 
     def keylocations(self) -> dict:
         '''
-        Retrieve list oc locations possibly holding a small key.
+        Retrieve list of locations possibly holding a small key.
 
         Returns:
             dict: {'location name': location object}

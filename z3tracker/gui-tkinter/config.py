@@ -112,6 +112,13 @@ class ConfigWindow(tk.Toplevel):
             'swords')
         self._make_check(7, sec, 'Enemiser', 'enemiser')
 
+        sec = ttk.LabelFrame(
+            col, padding=PADDING, text='Display settings')
+        sec.grid(column=0, row=1, sticky=tk.E+tk.W)
+        self.widgets.append(sec)
+
+        self._make_check(0, sec, 'Major Locations Only', 'majoronly')
+
         buttonframe = ttk.Frame(self.frame)
         buttonframe.grid(column=0, columnspan=9, row=9, sticky=tk.E+tk.S)
         okbutton = ttk.Button(buttonframe, command=self.apply, text='Apply')

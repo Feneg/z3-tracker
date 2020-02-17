@@ -137,6 +137,8 @@ class Tracker(object):
             self.settings.add('swordless')
         if CONFIG['enemiser']:
             self.settings.add('enemiser')
+        if CONFIG['majoronly']:
+            self.settings.add('majoronly')
         self._set_startpoint()
 
     def _set_startpoint(self) -> None:
@@ -229,7 +231,8 @@ class Tracker(object):
         else:
             gametype = 'item'
         self.maps[maptype].place_buttons(
-            self.ruleset.locations(gametype, maptype))
+            self.ruleset.locations(
+                gametype, maptype, 'majoronly' in self.settings))
 
     def update_buttons(self, available: typing.Mapping,
                        visible: typing.Sequence[str]) -> None:
@@ -884,8 +887,12 @@ class Tracker(object):
         '''
 
         total_chests = 0
-        for loc in self.ruleset.dungeons[dungeon].values():
-            if loc.type.startswith('dungeonchest'):
+        for locname in self.ruleset.dungeons[dungeon]:
+            majorcheck = (
+                'majoronly' not in self.settings or
+                locname in ruleset.MAJORLOCATIONS)
+            loc = self.ruleset.dungeons[dungeon][locname]
+            if loc.type.startswith('dungeonchest') and majorcheck:
                 total_chests += 1
         return total_chests
 

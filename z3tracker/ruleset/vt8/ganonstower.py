@@ -274,7 +274,7 @@ LOCATIONS = {
             "Ganon's Tower Torch Key Room": []}
     },
     "Ganon's Tower Treasure": {
-        'type': 'area', 'dungeon': "Ganon's Tower",
+        'type': 'dungeonchest_nokey', 'dungeon': "Ganon's Tower",
         'link': {
             "Ganon's Tower Treasure Room": []}
     },
