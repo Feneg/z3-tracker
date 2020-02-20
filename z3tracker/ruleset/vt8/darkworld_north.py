@@ -13,6 +13,8 @@ LOCATIONS = {
                 ('nosettings', 'inverted'), ('item', 'mirror')])],
             'Graveyard Cave Entrance (E)': [('and', [
                 ('nosettings', 'inverted'), ('item', 'mirror')])],
+            "King's Tomb Entrance (E)": [('and', [
+                ('nosettings', 'inverted'), ('item', 'mirror')])],
             "Thieves' Town Surface": [],
             'Skull Woods Surface': [],
             "Thieves' Town Fortune Teller Entrance (E)": [],

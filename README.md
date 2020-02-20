@@ -53,6 +53,7 @@ In order to allow as much flexibility as possible in the placement of various pa
 * all five goals
 * basic enemy shuffle (but not boss shuffle)
 * Ganon's Tower/Ganon crystal requirements
+* major item shuffle
 
 ##### Items and dungeons
 
@@ -60,7 +61,7 @@ In order to allow as much flexibility as possible in the placement of various pa
 
 ![Dungeons](screenshots/dungeons.png)
 
-Everything should be self-explanatory. Left-click and right-click the various objects to activate, deactivate, increase or decrease them. Certain items are grouped together on the same spot. These reflect their grouping in the game's item menu. Some functionality in the dungeon tracker like key counting is only shown when certain settings are selected.
+Everything should be self-explanatory. Left-click and right-click the various objects to activate, deactivate, increase or decrease them. Certain items are grouped together on the same spot, e.g. both boomerangs. These reflect their grouping in the game's item menu. Some functionality in the dungeon tracker like key counting is only shown when certain settings like key-sanity are selected.
 
 Crystal requirements can be set at the bottom right of the dungeon tracker window.
 
@@ -70,7 +71,7 @@ Crystal requirements can be set at the bottom right of the dungeon tracker windo
 
 If entrance randomiser is activated, big round symbols denote overworld items. You can left-click them to mark and unmark them as checked. An explanation of the symbol colours is provided in the in-program help.
 
-Other types of generic item locations are only shown if entrance randomiser is disabled.
+There are also other types of generic item locations, but these are only shown if entrance randomiser is disabled.
 
 Colour coding:
 
@@ -91,7 +92,8 @@ Entrances are marked as small squares. Just like with item locations, they can b
 
 However, entrances also support two more actions:
 
-* Middle-clicking an entrance and then middle-clicking another (or the same) entrance will connect the entrance of the first-clicked location with the interior of the second-clicked one. If an entrance is right-clicked on, any connection that this entrance might have is removed.
+* Middle-clicking an entrance and then middle-clicking another (or the same) entrance will connect the entrance of the first-clicked location with the interior of the second-clicked one. Right-clicking on any point in the map that is not a button aborts the connection process.
+* If an entrance is right-clicked on, any connection that this entrance might have is removed.
 
 When moving the mouse over an entrance with an established connection, the borders of various other (or the same) entrances may change colour. The meaning of these colours is explained in the in-program help.
 
@@ -99,7 +101,7 @@ When moving the mouse over an entrance with an established connection, the borde
 
 ##### Dungeons
 
-Dungeons are big squares with a smaller inset square. They generally follow the same colours as items (which are explained in the in-program help). The inner square denotes whether the item reward is available, while the outer square shows whether all items in the dungeon can be collected. Since the boss in a dungeon can always hold an item, the outer square will never show itself as fully available without the inner square doing so.
+Dungeons are big squares with a smaller inset square. They generally follow the same colours as items (which are explained in the in-program help). The inner square denotes whether the item reward is available, while the outer square shows whether all items in the dungeon can be collected. The outer square does not take any potential item on the boss into account.
 
 Dungeon buttons can't be interacted with. They are controlled via the dungeon tracker.
 
