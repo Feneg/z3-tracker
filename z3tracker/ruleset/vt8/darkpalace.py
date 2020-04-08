@@ -33,7 +33,7 @@ LOCATIONS = {
     'Dark Palace Front': {
         'type': 'area', 'dungeon': 'Dark Palace',
         'link': {
-            'Dark Palace Entrance (E)': [],
+            'Dark Palace Entrance (I)': [],
             'Dark Palace First Key': [],
             'Dark Palace Centre': [('smallkey', 'Dark Palace')],
             'Dark Palace Hidden Path': [

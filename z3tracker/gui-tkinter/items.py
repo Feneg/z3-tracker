@@ -172,11 +172,11 @@ def _scale_factors() -> (int, int):
     for up in range(1, 1000):
         if not (scaling * up) % 1:
             upscale = int(scaling * up)
+            downscale = up
             break
     else:
         CONFIG.set('icon_size', 1)
         assert False
-    downscale = int(upscale // scaling)
     return upscale, downscale
 
 

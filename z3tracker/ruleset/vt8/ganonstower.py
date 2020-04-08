@@ -364,7 +364,9 @@ LOCATIONS = {
     "Ganon's Tower Reward": {
         'type': 'area', 'dungeon': "Ganon's Tower",
         'link': {
-            'Pyramid': [('nosettings', 'inverted')],
-            'Castle Walls': [('settings', 'inverted')]}
+            'Pyramid': [('and', [
+                ('nosettings', 'inverted'), ('state', 'rabbit;add')])],
+            'Castle Walls': [('and', [
+                ('settings', 'inverted'), ('state', 'rabbit;add')])]}
     },
 }

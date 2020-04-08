@@ -14,6 +14,7 @@ common = importlib.import_module(
     '..gui-common.dungeons', package=__package__)
 REWARDS = common.REWARDS
 
+from .config import FATFONT
 from . import misc
 
 __all__ = 'DungeonWindow',
@@ -181,7 +182,7 @@ class DungeonWindow(tk.Toplevel):
             newtext = str(cobj['count'])
         cobj['canvas'].delete(cobj['text'])
         cobj['text'] = cobj['canvas'].create_text(
-            48 * scale, 32 * scale, anchor=tk.SE, font=('Arial Black', 16),
+            48 * scale, 32 * scale, anchor=tk.SE, font=FATFONT,
             text=newtext)
 
 
@@ -230,7 +231,10 @@ class Dungeon(ttk.Frame):
 
         self.complete = tk.Canvas(
             self.child, height=32 * scale, width=32 * scale)
-        self.complete.create_rectangle(5, 5, 27, 27, width=4)
+        self.complete.create_rectangle(
+            4 * scale + 1, 4 * scale + 1,
+            int(32 * scale) - 5, int(32 * scale) - 5,
+            width=int(round(4 * scale)))
         self.completeid = None
         self.complete.bind(
             '<ButtonRelease-1>', lambda _: dungeon.mark_complete(True))
@@ -329,7 +333,12 @@ class Dungeon(ttk.Frame):
             icon = makebw(icon)
         if dungeon.completed and self.completeid is None:
             self.completeid = self.complete.create_text(
-                17, 17, anchor=tk.CENTER, font=('Arial Black', 20), text='✔')
+                int(32 * self.scaling[0] / self.scaling[1] / 2),
+                int(32 * self.scaling[0] / self.scaling[1] / 2),
+                anchor=tk.CENTER,
+                font=(FATFONT[0],
+                      int(round(20 * self.scaling[0] / self.scaling[1]))),
+                text='✔')
         elif not dungeon.completed and self.completeid is not None:
             self.complete.delete(self.completeid)
             self.completeid = None
@@ -372,8 +381,7 @@ class Dungeon(ttk.Frame):
         else:
             self.keytext = self.key.create_text(
                 48 * scale, 32 * scale, anchor=tk.SE,
-                font=('Arial Black', int(16 * scale)),
-                text=str(dungeon.smallkeys))
+                font=FATFONT, text=str(dungeon.smallkeys))
 
         # Check numbers (items).
         try:
@@ -382,8 +390,8 @@ class Dungeon(ttk.Frame):
             pass
         else:
             itemfont = (
-                ('Arial Black', int(8 * scale)) if dungeon.remaining() > 9
-                else ('Arial Black', int(16 * scale)))
+                (FATFONT[0], int(FATFONT[1] / 2)) if dungeon.remaining() > 9
+                else FATFONT)
             self.itemtext = self.item.create_text(
                 48 * scale, 32 * scale, anchor=tk.SE, font=itemfont,
                 text=str(dungeon.remaining()))
@@ -425,11 +433,11 @@ def _scale_factors() -> (int, int):
     for up in range(1, 1000):
         if not (scaling * up) % 1:
             upscale = int(scaling * up)
+            downscale = up
             break
     else:
         CONFIG.set('icon_size', 1)
         assert False
-    downscale = int(upscale // scaling)
     return upscale, downscale
 
 

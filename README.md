@@ -61,7 +61,7 @@ In order to allow as much flexibility as possible in the placement of various pa
 
 ![Dungeons](screenshots/dungeons.png)
 
-Everything should be self-explanatory. Left-click and right-click the various objects to activate, deactivate, increase or decrease them. Certain items are grouped together on the same spot, e.g. both boomerangs. These reflect their grouping in the game's item menu. Some functionality in the dungeon tracker like key counting is only shown when certain settings like key-sanity are selected.
+Everything should be self-explanatory. Left-click and right-click the various objects to activate, deactivate, increase or decrease them. Certain items are grouped together on the same spot, e.g. both boomerangs or Shovel and Ocarina. These reflect their grouping in the game's item menu. Some functionality in the dungeon tracker like key counting is only shown when certain settings like key-sanity are selected.
 
 Crystal requirements can be set at the bottom right of the dungeon tracker window.
 
@@ -93,7 +93,7 @@ Entrances are marked as small squares. Just like with item locations, they can b
 However, entrances also support two more actions:
 
 * Middle-clicking an entrance and then middle-clicking another (or the same) entrance will connect the entrance of the first-clicked location with the interior of the second-clicked one. Right-clicking on any point in the map that is not a button aborts the connection process.
-* If an entrance is right-clicked on, any connection that this entrance might have is removed.
+* If an entrance is right-clicked on, any connection that this exterior location might have is removed.
 
 When moving the mouse over an entrance with an established connection, the borders of various other (or the same) entrances may change colour. The meaning of these colours is explained in the in-program help.
 
@@ -109,7 +109,7 @@ Dungeon buttons can't be interacted with. They are controlled via the dungeon tr
 
 ![Retro Mode](screenshots/retro.png)
 
-Retro includes certain entrance buttons relevant to this mode even if entrance randomiser is switched off. In this case they do not offer any functionality beyond left-clicking.
+Retro includes certain entrance buttons relevant to this mode even if entrance randomiser is switched off. They represent shops and potential take-any caves. In this case these buttons do not offer any functionality beyond left-clicking.
 
 ### Saving
 
@@ -129,9 +129,9 @@ The Reset button clears all progress *and deletes the autosave*. Note that chang
 
 A project like this will always come with a plethora of bugs -- especially on weirder settings. However, there are a few areas where users should be especially careful:
 
-* Inverted crossworld shuffle (and inverted in general) probably hass issues for locations which require Moon Pearl. This is just a matter of me forgetting some bush or pot somewhere.
+* Inverted crossworld shuffle (and inverted in general) probably hass issues for locations which require Moon Pearl. This is just a matter of me forgetting some bush or pot somewhere. (Although there still remains one big issue with the tracking mechanic I need to work on.)
 * Support for glitched modes is limited. I do not wish to claim to be an authority on the rules applying to these modes, so I only included glitches which are clearly part of the item randomiser code -- which means not very many, since that code is not designed to contain such information. Major glitches especially mostly boils down to frame clipping without Pegasus Shoes and Bottle Music.
-* Hearts and Bottles beyond the first one are currently not tracked. This is mostly an issue in basic item placement where certain dungeons and bosses require a certain number of hearts and bottles. Some of these will therefore be marked as available earlier than they should.
+* Hearts and Bottles beyond the first one are currently not tracked. This is mostly an issue in basic item placement where a few dungeons and bosses require a certain number of hearts and bottles. Some of these will therefore be marked as available earlier than they should.
 * The rulesets for small keys don't strictly follow the randomiser's approach of 'most stupid use' possible, although it doesn't necessarily assume the smartest one either.
 * Insanity entrance shuffle is not supported. While z3-tracker internally knows the difference between going in and going out, I couldn't come up with a good user interface.
 * Possession of bombs (or rather the ability to damage enemies) isn't consistently checked (but the randomiser assumes bombs to always be available anyway).

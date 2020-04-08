@@ -19,6 +19,8 @@ def check_update_availability() -> str:
     '''
 
     print('Current version is {0:s}.'.format(version.__version__))
+    current = tuple(int(v) for v in version.__version__.split('.'))
+
     print('Checking for updates ...')
     request = http.client.HTTPSConnection('pypi.org')
     request.request('GET', '/pypi/z3-tracker/json')
@@ -48,7 +50,19 @@ def check_update_availability() -> str:
         print('   ... failed. Could not find any version information.')
         return False
     print('   ... done.')
-    if newest > version.__version__:
+
+    updated = tuple(int(v) for v in newest.split('.'))
+    for m in range(min(len(current), len(updated))):
+        if updated[m] > current[m]:
+            update_available = True
+            break
+    else:
+        if len(updated) > len(current):
+            update_available = True
+        else:
+            update_available = False
+
+    if update_available:
         print('Found newer version: {0:s}'.format(newest))
         return newest
     print('No newer version found.')

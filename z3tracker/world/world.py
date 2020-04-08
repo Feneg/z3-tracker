@@ -604,7 +604,7 @@ class Tracker(object):
                         sub = self._parse_requirement(
                                 [('and', [
                                     ('crystals', 'ganon'),
-                                    ('access', "Ganon's Tower Reward")])],
+                                    ('macro', 'ganondrop')])],
                                 state, nodelay, keys, all)
                     elif 'goal_fastganon' in self.settings:
                         sub = self._parse_requirement(
@@ -637,6 +637,16 @@ class Tracker(object):
                 elif robj == 'ganonstower':
                     sub = self._parse_requirement(
                         [('crystals', 'ganonstower')], state, nodelay, keys)
+                elif robj == 'ganondrop':
+                    if not nodelay:
+                        raise _DelayCheck('reward')
+                    if self._check_dungeon_state("Ganon's Tower"):
+                        sub = (True, ())
+                    else:
+                        sub = self._parse_requirement(
+                            [('access', "Ganon's Tower Reward")],
+                            state, nodelay, keys)
+                        sub[1].append('boss;add')
                 else:
                     print(rtype, robj)
                     assert False
@@ -837,19 +847,12 @@ class Tracker(object):
                 continue
             res, add = self._parse_requirement(
                 [('access', '{0:s} Reward'.format(dungeon))], [], available)
-            if not res and dungeon in knowndungeons:
-                ret = False
-                fail_guaranteed = True
-                break
             locations.append(res)
             for retstate in add:
-                if retstate.split(';')[0] == 'maybe':
+                if res and retstate.split(';')[0] == 'maybe':
                     maybes += 1
                     break
-            if not self._check_dungeon_state(dungeon):
-                boss_required += 1
-        else:
-            fail_guaranteed = False
+            boss_required += 1
 
         # Add all information together.
         addflag = ''
@@ -864,7 +867,7 @@ class Tracker(object):
                     addflag = 'maybe'
                 elif boss_required:
                     addflag = 'boss'
-        elif not fail_guaranteed:
+        else:
             ret = sum(locations) >= required[reward]
             if not ret:
                 ret = unknown_requirement

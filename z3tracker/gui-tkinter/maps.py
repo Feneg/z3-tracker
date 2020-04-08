@@ -70,12 +70,12 @@ class MapDisplay(tk.Toplevel):
         for up in range(1, 1000):
             if not (scaling * up) % 1:
                 upscale = int(scaling * up)
+                downscale = up
                 break
         else:
             CONFIG['map_size'] = 1
             self.scale = 1
             assert False
-        downscale = int(upscale // scaling)
         if upscale != 1:
             imagefile = imagefile.zoom(upscale, upscale)
         if downscale != 1:

@@ -11,10 +11,6 @@ LOCATIONS = {
         'link': {
             'North Light World': [('and', [
                 ('nosettings', 'inverted'), ('item', 'mirror')])],
-            'Graveyard Cave Entrance (E)': [('and', [
-                ('nosettings', 'inverted'), ('item', 'mirror')])],
-            "King's Tomb Entrance (E)": [('and', [
-                ('nosettings', 'inverted'), ('item', 'mirror')])],
             "Thieves' Town Surface": [],
             'Skull Woods Surface': [],
             "Thieves' Town Fortune Teller Entrance (E)": [],
@@ -27,6 +23,7 @@ LOCATIONS = {
                     ('glitch', 'overworld'), ('item', 'pegasus')])],
             'North Specialty Shop Entrance (E)': [],
             'Dark Chapel Entrance (E)': [],
+            'Haunted Graveyard': [('rabbitbarrier', None)],
             'Dark River': [
                 ('item', 'flippers'),
                 ('and', [
@@ -139,6 +136,15 @@ LOCATIONS = {
         'link': {
             'North Dark World': [],
             'Dark Chapel Entrance (I)': []}
+    },
+    'Haunted Graveyard': {
+        'type': 'area',
+        'link': {
+            'North Dark World': [('rabbitbarrier', None)],
+            'Graveyard Cave Entrance (E)': [('and', [
+                ('nosettings', 'inverted'), ('item', 'mirror')])],
+            "King's Tomb Entrance (E)": [('and', [
+                ('nosettings', 'inverted'), ('item', 'mirror')])]}
     },
     'Dark Chapel Entrance (I)': {
         'type': 'interior',

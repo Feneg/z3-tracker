@@ -232,7 +232,7 @@ LOCATIONS = {
             'Witch Hut River': []}
     },
     'Locksmith': {
-        'type': 'chest', 'map': 'light', 'coord': (224, 594),
+        'type': 'item', 'map': 'light', 'coord': (224, 594),
         'link': {
             'Southern Shores': []}
     },

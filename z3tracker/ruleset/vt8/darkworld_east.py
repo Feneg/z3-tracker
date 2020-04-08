@@ -147,7 +147,11 @@ LOCATIONS = {
                             ('settings', 'entrance')]),
                         ('state', 'maybe;add')])])])],
             'Ganon Drop Entrance (E)': [('and', [
-                ('nosettings', 'inverted'), ('macro', 'ganon')])]}
+                ('nosettings', 'inverted'),
+                ('or', [
+                    ('and', [
+                        ('nosettings', 'entrance'), ('settings', 'fastganon')]),
+                    ('macro', 'ganondrop')])])]}
     },
     'Pyramid Item': {
         'type': 'item', 'map': 'dark', 'coord': (379, 297),
@@ -180,6 +184,7 @@ LOCATIONS = {
         'type': 'interior',
         'link': {
             'Ganon': [('and', [
+                ('macro', 'ganon'),
                 ('item', 'mastersword'),
                 ('item', 'bow'),
                 ('or', [('item', 'firerod'), ('item', 'lantern')]),

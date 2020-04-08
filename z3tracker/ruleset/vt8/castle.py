@@ -247,8 +247,6 @@ LOCATIONS = {
             'Western Wall Access Entrance (E)': [],
             'Eastern Wall Access Entrance (E)': [],
             'Hyrule Castle': [],
-            'Ganon Drop Entrance (E)': [('and', [
-                ('settings', 'inverted'), ('macro', 'ganon')])],
             'Castle Tower Entrance (E)': [
                 ('and', [
                     ('nosettings', 'inverted'),
@@ -258,7 +256,13 @@ LOCATIONS = {
                             ('settings', 'swordless'),
                             ('item', 'hammer')])])]),
                 ('and', [
-                    ('settings', 'inverted'), ('macro', 'ganonstower')])]}
+                    ('settings', 'inverted'), ('macro', 'ganonstower')])],
+            'Ganon Drop Entrance (E)': [('and', [
+                ('settings', 'inverted'),
+                ('or', [
+                    ('and', [
+                        ('nosettings', 'entrance'), ('settings', 'fastganon')]),
+                    ('macro', 'ganondrop')])])]}
     },
     'Castle Tower Entrance (E)': {
         'type': 'entrance_dungeon', 'map': 'light', 'coord': (332, 265),

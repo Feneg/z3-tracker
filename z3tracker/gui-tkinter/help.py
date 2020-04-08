@@ -257,7 +257,7 @@ class HelpWindow(tk.Toplevel):
             outline='blue', width=3)
         text = ttk.Label(
             widget,
-            text='This entrance leads to same interior as selected one.')
+            text='This exit can be reached from selected entrance.')
         text.grid(column=1, row=4, sticky=tk.W)
         self.widgets.extend((canvas, widget))
 
@@ -306,7 +306,7 @@ class HelpWindow(tk.Toplevel):
         button.grid(column=0, row=1, sticky=misc.A)
         spacer = ttk.Label(widget, width=1)
         spacer.grid(column=1, row=1, sticky=misc.A)
-        text = ttk.Label(widget, text='Link entrance to location')
+        text = ttk.Label(widget, text='Link entrances')
         text.grid(column=2, row=1, sticky=tk.W)
 
         button = ttk.Label(widget, text='Right-click:')

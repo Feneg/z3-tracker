@@ -11,8 +11,7 @@ __all__ = 'DEFAULT', 'OVERWRITE'
 
 DEFAULT = {
     'gui': ('gui-tkinter', str),
-    'font_size': (
-        '14' if sys.platform.startswith('win32') else '12', int),
+    'font_size': ('14', int),
     'icon_size': ('1.0', float),
     'map_size': ('1.0', float),
     'autosave': ('autosave.json', str),
@@ -42,5 +41,6 @@ OVERWRITE = {
     '0.9.6': set(),
     '0.9.7': set(),
     '0.9.8': set(),
-    '0.9.9': set()
+    '0.9.9': set(),
+    '0.9.10': set()
 }

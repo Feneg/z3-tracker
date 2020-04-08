@@ -16,6 +16,8 @@ from . import misc
 SPACERWIDTH = -5
 PADDING = 3
 FONT = ('Arial', CONFIG['font_size'])
+FATFONT = ('Arial Black',
+           int(round(CONFIG['font_size'] * CONFIG['icon_size'] * 1.33)))
 
 __all__ = 'start',
 
