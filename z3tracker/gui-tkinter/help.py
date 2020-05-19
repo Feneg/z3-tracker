@@ -41,6 +41,7 @@ class HelpWindow(tk.Toplevel):
         self._dungeon_buttons()
         self._entrance_buttons()
         self._map_control()
+        self._retro_mode()
 
     def _item_buttons(self) -> None:
         '''
@@ -315,6 +316,22 @@ class HelpWindow(tk.Toplevel):
         spacer.grid(column=1, row=2, sticky=misc.A)
         text = ttk.Label(widget, text='Abort linking or unlink location')
         text.grid(column=2, row=2, sticky=tk.W)
+
+    def _retro_mode(self) -> None:
+        '''
+        Retro mode shortcut.
+        '''
+
+        widget = ttk.LabelFrame(self.rightframe, text='Retro mode')
+        widget.grid(column=0, row=1, sticky=tk.N+tk.E+tk.W)
+
+        button = ttk.Label(widget, text='R-key:')
+        button.grid(column=0, row=0, sticky=misc.A)
+        spacer = ttk.Label(widget, width=1)
+        spacer.grid(column=1, row=0, sticky=misc.A)
+        text = ttk.Label(
+            widget, text='Mark take-any caves and shops as checked')
+        text.grid(column=2, row=0, sticky=tk.W)
 
     def reset(self) -> None:
         '''

@@ -89,6 +89,9 @@ class MapDisplay(tk.Toplevel):
         self.map.bind('<Enter>', self._update_entrance_state)
         self.map.bind('<Leave>', lambda _: self.helper.configure(background=''))
 
+        # Only for Retro mode
+        self.bind('<r>', lambda _: self._clear_retro())
+
     def add_location_tracker(self, locationtracker) -> None:
         '''
         Add location tracker.
@@ -511,6 +514,19 @@ class MapDisplay(tk.Toplevel):
         '''
 
         self.entrancetracker = entrancetracker
+
+    def _clear_retro(self) -> None:
+        '''
+        Mark all Retro buttons.
+        '''
+
+        if CONFIG['world_state'] == 'Retro':
+            for button in self.button:
+                if self.button[button]['type'] in (
+                        'entrance', 'entrance_shop'):
+                    self.tracker[button] = False
+                    self._set_colour(button)
+            self.tracker.save()
 
     def _chest_icon(self, location: typing.Sequence[int]) -> int:
         shape = -7, -7, 7, 7

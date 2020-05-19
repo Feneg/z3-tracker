@@ -6,6 +6,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import typing
 
+from ..autotracker import AutotrackToggle
 from ..config import CONFIG
 from .. import items
 
@@ -24,6 +25,7 @@ class ItemWindow(tk.Toplevel):
         helpertext: helper text variable
         scaling: scaling factor of individual buttons
         buttons: {'item identifier': button object}
+        autotrack: True if autotracker is active
     '''
 
     def __init__(self, tracker: items.ItemTracker):
@@ -38,11 +40,17 @@ class ItemWindow(tk.Toplevel):
         self.tracker = tracker
 
         self.frame = ttk.Frame(self)
-        self.frame.grid(column=0, row=0, sticky=misc.A)
+        self.frame.pack(side='top', fill='both', expand=True)
+        self.bottomline = ttk.Frame(self)
+        self.bottomline.pack(side='top', fill='x', expand=True)
+        self.autotrack = AutotrackToggle(self.bottomline)
+        self.autotrack.pack(side='left')
+        self.helperframe = ttk.Frame(self.bottomline)
+        self.helperframe.pack(side='right', fill='x', expand=True)
         self.helpertext = tk.StringVar()
         self.helper = ttk.Label(
-            self, textvariable=self.helpertext)
-        self.helper.grid(column=0, row=1, sticky=tk.S)
+            self.helperframe, anchor=tk.CENTER, textvariable=self.helpertext)
+        self.helper.pack(side='right', fill='x', expand=True)
 
         self.scaling = _scale_factors()
 
@@ -97,7 +105,20 @@ class ItemWindow(tk.Toplevel):
             add='+')
         button.grid(column=item.location[1], row=item.location[0])
         self.buttons[item.identifier] = button
-        
+
+    def set_all(self, stepping: dict) -> None:
+        '''
+        Set all items in one sweep.
+
+        Args:
+            stepping: {'item identifier': required stepping}
+        '''
+
+        self.tracker.restore(stepping)
+        self.tracker.save()
+        for item in self.tracker:
+            if self.tracker[item].icon:
+                self.buttons[item].check_state(self.tracker[item])
 
     def reset(self) -> None:
         '''
@@ -129,6 +150,7 @@ class ItemButton(tk.Canvas):
         self.scaling = scaling
         self.img = None
         self.icon = None
+        self.state = None
         self.check_state(item)
 
     def check_state(self, item) -> None:
@@ -139,6 +161,8 @@ class ItemButton(tk.Canvas):
             item: item object
         '''        
 
+        if self.state == item.inventory:
+            return
         self.delete(self.img)
         icon = tk.PhotoImage(
             file=item.icon[item.index()], master=self.master)
@@ -157,6 +181,7 @@ class ItemButton(tk.Canvas):
                     icon.put('#{0:02x}{0:02x}{0:02x}'.format(bw), (x, y))
         self.img = self.create_image(0, 0, anchor=tk.NW, image=icon)
         self.icon = icon
+        self.state = item.inventory
 
 
 def _scale_factors() -> (int, int):

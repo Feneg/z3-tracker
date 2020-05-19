@@ -105,7 +105,7 @@ LOCATIONS= {
             'Sanctuary Entrance Entrance (E)': [],
             'Sanctuary Drop Entrance (E)': [('item', 'powerglove')],
             'Graveyard Cave Entrance': [
-                ('settings', 'inverted'),
+                ('and', [('settings', 'inverted'), ('rabbitbarrier', None)]),
                 ('and', [
                     ('glitch', 'overworld'), ('item', 'pegasus')])],
             "King's Tomb Entrance (E)": [('and', [

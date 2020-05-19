@@ -16,7 +16,9 @@ LOCATIONS = {
     'Finding The Lost Man': {
         'type': 'area',
         'link': {
-            'Hebra Ascent': []}
+            'Hebra Ascent': [],
+            "Lost Man's Cave Front Entrance Entrance (I)": [
+                ('access', "Lost Man's Cave Front Entrance Entrance (E)")]}
     },
     'Hebra Ascent (Top) Entrance (I)': {
         'type': 'interior',
@@ -178,7 +180,7 @@ LOCATIONS = {
     'Heart Rock Cave Bottom': {
         'type': 'area',
         'link': {
-            'Heart Rock Cave Bottom Entrance Entrance (E)': [],
+            'Heart Rock Cave Bottom Entrance Entrance (I)': [],
             'Heart Rock Cave Heart': [],
             'West Hebra Fairy Cave': []}
     },

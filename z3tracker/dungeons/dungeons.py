@@ -57,7 +57,8 @@ class DungeonTracker(dict):
         for rawdungeon in DUNGEONS:
             dungeon = DungeonObj(
                 rawdungeon, DUNGEONS[rawdungeon][0], DUNGEONS[rawdungeon][1],
-                DUNGEONS[rawdungeon][2], DUNGEONS[rawdungeon][3], worldtracker)
+                DUNGEONS[rawdungeon][2], DUNGEONS[rawdungeon][3], worldtracker,
+                DUNGEONS[rawdungeon][4])
             try:
                 dungeon.location = layout[dungeon]
             except KeyError:

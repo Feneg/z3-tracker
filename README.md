@@ -8,9 +8,10 @@ z3-tracker is yet another tracker for The Legend of Zelda: A Link to the Past. I
 
 * item tracking,
 * location tracking,
-* entrance tracking.
+* entrance tracking,
+* autotracking (limited to major items for now).
 
-It supports every game mode except insanity entrance shuffle and boss shuffle.
+It supports every game mode of the VT8 randomiser except insanity entrance shuffle and boss shuffle.
 
 ### Installation
 
@@ -20,15 +21,35 @@ z3-tracker is available for Linux, Windows and MacOS. Note that the main develop
 
 Ensure that Python 3.6 or higher are available. z3-tracker also requires full tkinter support -- since tkinter is part of the core Python library, most distributions include it. If you are unsure, the quickest way to check is to try whether the command `python3 -c 'import tkinter.ttk'` is available.
 
-You can run z3-tracker simply by running the z3-tracker.py script (i.e. `python3 z3-tracker.py`). Various other ways are available, including installing via pip (e.g. `pip3 install --user z3-tracker`).
+You can run z3-tracker simply by running the z3-tracker.py script (i.e. `python3 z3-tracker.py`). Various other ways are available, including installing from PyPI (e.g. `pip3 install --user z3-tracker`).
 
 ##### Windows
 
-You will need Python 3.6 or higher. You can get it [here](https://www.python.org/downloads/). Be sure not to de-select tkinter during installation. If you've allowed the installer to associate PY files with Python 3, just double-clicking `z3-tracker.py` should suffice.
+You will need Python 3.6 or higher. You can get it [here](https://www.python.org/downloads/). When running the installer, check the button 'Add Python #.# to PATH'. Also be sure not to de-select tkinter during installation. If you've allowed the installer to associate PY files with Python 3, just double-clicking `z3-tracker.py` should suffice.
 
 ##### MacOS
 
 No support for installation on MacOS can be given here, but it *should* run. As with the other operating systems, Python 3.6 or higher is required. Again, I can't give any further details as to how to install that and run z3-tracker on MacOS.
+
+##### Autotracking support
+
+In order two be able to use autotracking, two external components need to be available: websockets and QUsb2snes.
+
+z3-tracker will work without these, but autotracking won't be available.
+
+###### Websockets
+
+Autotracking in z3-tracker depends on the Python websockets module. This library enables z3-tracker to communicate with QUsb2snes.
+
+The easiest cross-platform way to install websockets is pip. In Windows, open CMD (on Windows 10: right-click Windows button → 'Command Prompt'). On Linux and Mac OS, open a terminal. Then type: 'pip3 install --user websockets'. That's it. (You might encounter a warning informing you that pip is out of date. For the purpose of running z3-tracker, you can safely ignore this message.)
+
+Most Linux distribution also distribute it via their package manager under names like 'python3-websockets' (Debian, Ubuntu, Fedora) or 'python-websockets' (Arch).
+
+###### QUsb2snes
+
+You need to install and run [QUsb2snes](https://skarsnik.github.io/QUsb2snes/#installation). This program is the de-facto standard for features like autotracking or multiworld. Despite its name, QUsb2snes does not require using an SD2SNES -- it also works with several PC-based emulators. Please check the linked documentation for further details.
+
+Once started, make sure that QUsb2snes is connected with your console or emulator. If QUsb2snes can't find your device, z3-tracker won't either.
 
 ##### Config files
 
@@ -53,7 +74,8 @@ In order to allow as much flexibility as possible in the placement of various pa
 * all five goals
 * basic enemy shuffle (but not boss shuffle)
 * Ganon's Tower/Ganon crystal requirements
-* major item shuffle
+* major item only shuffle
+* shop-sanity (yet unreleased at time of writing)
 
 ##### Items and dungeons
 
@@ -61,7 +83,7 @@ In order to allow as much flexibility as possible in the placement of various pa
 
 ![Dungeons](screenshots/dungeons.png)
 
-Everything should be self-explanatory. Left-click and right-click the various objects to activate, deactivate, increase or decrease them. Certain items are grouped together on the same spot, e.g. both boomerangs or Shovel and Ocarina. These reflect their grouping in the game's item menu. Some functionality in the dungeon tracker like key counting is only shown when certain settings like key-sanity are selected.
+Everything should be self-explanatory. Left-click and right-click the various objects to activate, deactivate, increase or decrease them. Certain items are grouped together on the same spot, e.g. both boomerangs or Shovel and Ocarina. These reflect their grouping in the game's item menu. Some functionality in the dungeon tracker like key counting is only shown if certain settings like key-sanity are selected.
 
 Crystal requirements can be set at the bottom right of the dungeon tracker window.
 
@@ -111,6 +133,25 @@ Dungeon buttons can't be interacted with. They are controlled via the dungeon tr
 
 Retro includes certain entrance buttons relevant to this mode even if entrance randomiser is switched off. They represent shops and potential take-any caves. In this case these buttons do not offer any functionality beyond left-clicking.
 
+#### Major items only
+
+This option assumes that only major item locations are shuffled. All locations which do not contain major items in an unmodified game are therefore removed from the maps.
+
+##### Autotracking
+
+z3-tracker contains autotracking functionality. At time of writing, only items are tracked. In order to enable autotracking, ensure that the python websocket package is installed and available and that [QUsb2snes](https://github.com/Skarsnik/QUsb2snes) is running correctly on port 8080. You can then enable autotracking in the settings and choose a device to track. A status message in the main menu will tell you the current status of the autotracker.
+
+Note that the autotracker updates at a fixed interval of about five seconds. That means once you picked up an item, it will take up to five seconds until it will appear on the item menu.
+
+At the bottom of the item window, a button 'Auto' will appear. Its colour depends on the autotracking status:
+* blue: autotracker is connected and tracking items
+* orange: autotracker is connected but the game is currently not in a state to allow autotracking or the game isn't running at all
+* red: autotracker could not connect to the console/emulator/QUsb2snes
+
+If you click on the button, you can temporarily switch autotracking off for this window. This will allow you to temporarily use this window manually. Clicking on the button again will switch back to autotracking and wipe any manual changes you made.
+
+To disable autotracking entirely, just uncheck the respective option in the settings.
+
 ### Saving
 
 ##### Autosaving
@@ -123,15 +164,15 @@ If you wish to track several states at the same time, you can also create dedica
 
 ##### Resetting
 
-The Reset button clears all progress *and deletes the autosave*. Note that changing any settings will not cause a reset (but vigorously switching between entrance randomiser and Retro will probably cause some display issues).
+The Reset button clears all progress *and deletes the autosave*. Note that changing settings will not cause a reset (but vigorously switching between entrance randomiser and Retro will probably cause some display issues).
 
 ### Issues/bugs
 
 A project like this will always come with a plethora of bugs -- especially on weirder settings. However, there are a few areas where users should be especially careful:
 
-* Inverted crossworld shuffle (and inverted in general) probably hass issues for locations which require Moon Pearl. This is just a matter of me forgetting some bush or pot somewhere. (Although there still remains one big issue with the tracking mechanic I need to work on.)
+* Inverted crossworld shuffle (and inverted in general) probably has issues for locations which require Moon Pearl. This is just a matter of me forgetting some bush or pot somewhere.
 * Support for glitched modes is limited. I do not wish to claim to be an authority on the rules applying to these modes, so I only included glitches which are clearly part of the item randomiser code -- which means not very many, since that code is not designed to contain such information. Major glitches especially mostly boils down to frame clipping without Pegasus Shoes and Bottle Music.
-* Hearts and Bottles beyond the first one are currently not tracked. This is mostly an issue in basic item placement where a few dungeons and bosses require a certain number of hearts and bottles. Some of these will therefore be marked as available earlier than they should.
+* Hearts and Bottles beyond the first one are currently not tracked. This is only an issue in basic item placement where a few dungeons and bosses require a certain number of hearts and bottles. Some of these will therefore be marked as available earlier than they should.
 * The rulesets for small keys don't strictly follow the randomiser's approach of 'most stupid use' possible, although it doesn't necessarily assume the smartest one either.
 * Insanity entrance shuffle is not supported. While z3-tracker internally knows the difference between going in and going out, I couldn't come up with a good user interface.
 * Possession of bombs (or rather the ability to damage enemies) isn't consistently checked (but the randomiser assumes bombs to always be available anyway).

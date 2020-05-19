@@ -109,6 +109,11 @@ LOCATIONS = {
         'type': 'interior',
         'link': {
             'Desert Palace Main Entrance Entrance (E)': [],
+            'Desert Palace Lobby': []}
+    },
+    'Desert Palace Lobby': {
+        'type': 'area', 'dungeon': 'Desert Palace',
+        'link': {
             'Desert Palace Interior': [('and', [
                 ('rabbitbarrier', None),
                 ('or', [('nosettings', 'majoronly'), ('item', 'pegasus')])])]}
@@ -117,9 +122,8 @@ LOCATIONS = {
         'type': 'interior',
         'link': {
             'Desert Palace Side Entrance Entrance (E)': [],
-            'Desert Palace Interior': [('and', [
-                ('rabbitbarrier', None),
-                ('or', [('nosettings', 'majoronly'), ('item', 'pegasus')])])]}
+            'Desert Palace Interior': [('or', [
+                ('nosettings', 'majoronly'), ('item', 'pegasus')])]}
     },
     'Desert Palace Side Entrance Entrance (E)': {
         'type': 'entrance_dungeon', 'map': 'light', 'coord': (75, 527),
@@ -131,24 +135,30 @@ LOCATIONS = {
     'Desert Palace Interior': {
         'type': 'area', 'dungeon': 'Desert Palace',
         'link': {
-            'Desert Palace Main Entrance Entrance (I)': [],
+            'Desert Palace Lobby': [('rabbitbarrier', None)],
             'Desert Palace Side Entrance Entrance (I)': [],
             'Desert Palace Back Entrance Entrance (I)': [],
-            'Desert Palace Compass': [('smallkey', 'Desert Palace')],
-            'Desert Palace Map': [],
+            'Desert Palace Compass Room': [('smallkey', 'Desert Palace')],
+            'Desert Palace Map': [('rabbitbarrier', None)],
             'Desert Palace Small Key': [('item', 'pegasus')],
-            'Desert Palace Treasure': [('bigkey', 'Desert Palace')]}
+            'Desert Palace Treasure Lobby': [('rabbitbarrier', None)]}
+    },
+    'Desert Palace Compass Room': {
+        'type': 'area', 'dungeon': 'Desert Palace',
+        'link': {
+            'Desert Palace Compass': [('rabbitbarrier', None)],
+            'Desert Palace Big Key': [('rabbitbarrier', None)],
+            'Desert Palace Interior': []}
     },
     'Desert Palace Compass': {
         'type': 'dungeonchest', 'dungeon': 'Desert Palace',
         'link': {
-            'Desert Palace Interior': [],
-            'Desert Palace Big Key': []}
+            'Desert Palace Compass Room': []}
     },
     'Desert Palace Big Key': {
         'type': 'dungeonchest', 'dungeon': 'Desert Palace',
         'link': {
-            'Desert Palace Compass': []}
+            'Desert Palace Compass Room': []}
     },
     'Desert Palace Map': {
         'type': 'dungeonchest', 'dungeon': 'Desert Palace',
@@ -160,19 +170,23 @@ LOCATIONS = {
         'link': {
             'Desert Palace Interior': []}
     },
+    'Desert Palace Treasure Lobby': {
+        'type': 'area', 'dungeon': 'Desert Palace',
+        'link': {
+            'Desert Palace Treasure': [('bigkey', 'Desert Palace')],
+            'Desert Palace Interior': []}
+    },
     'Desert Palace Treasure': {
         'type': 'dungeonchest', 'dungeon': 'Desert Palace',
         'link': {
-            'Desert Palace Interior': []}
+            'Desert Palace Treasure Lobby': []}
     },
     'Desert Palace Back Entrance Entrance (I)': {
         'type': 'interior',
         'link': {
             'Desert Palace Back Entrance Entrance (E)': [],
-            'Desert Palace Interior': [('and', [
-                ('rabbitbarrier', None),
-                ('or', [
-                    ('nosettings', 'majoronly'), ('item', 'pegasus')])])]}
+            'Desert Palace Interior': [('or', [
+                    ('nosettings', 'majoronly'), ('item', 'pegasus')])]}
     },
     'Desert Palace Back Entrance Entrance (E)': {
         'type': 'entrance_dungeon', 'map': 'light', 'coord': (23, 527),

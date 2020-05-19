@@ -3,6 +3,7 @@ Program GUI
 '''
 
 import importlib
+import math
 import os
 import re
 import threading
@@ -12,6 +13,7 @@ import tkinter.messagebox as tkmbox
 import tkinter.ttk as ttk
 import typing
 
+from .. import autotracker
 from ..config import CONFIGDIRECTORY, CONFIG
 common = importlib.import_module(
     '..gui-common.interface', package=__package__)
@@ -62,6 +64,7 @@ class GraphicalInterface(tk.Tk):
         self.protocol('WM_DELETE_WINDOW', self.quit)
 
         self._start_update_check()
+        self._start_autotracker()
 
     def _restore_windows(self) -> None:
         '''
@@ -117,6 +120,7 @@ class GraphicalInterface(tk.Tk):
         Quit program.
         '''
 
+        autotracker.STOP.set()
         common.save_window_cache(self._window_layout())
         for window in self._windows:
             if window != 'menu':
@@ -183,7 +187,7 @@ class GraphicalInterface(tk.Tk):
         Create menu buttons.
         '''
 
-        self.title('Menu')
+        self.title('z3-tracker')
 
         self._menu = ttk.Frame(self)
         self._menu.grid(column=0, row=0, sticky=misc.A)
@@ -286,6 +290,30 @@ class GraphicalInterface(tk.Tk):
         check = threading.Thread(
             target=self._update_check, name='Update checker', daemon=True)
         check.start()
+
+    def _start_autotracker(self) -> None:
+        '''
+        Initiate autotracker.
+        '''
+
+        autotracker.INTERFACES['items'] = self._windows['items']
+        infostring = tk.StringVar()
+        atframe = ttk.LabelFrame(self, text='Autotracker')
+        atframe.grid(column=0, row=2, sticky=misc.A)
+        infotext = ttk.Label(
+            atframe, textvariable=infostring, wraplength='{0:d}mm'.format(
+                math.floor(55 * CONFIG['font_size'] / 16 + 5)))
+        infotext.grid(column=0, row=0, sticky=misc.A)
+        refresh = threading.Event()
+        atframe.refreshbutton = ttk.Button(
+            atframe, command=refresh.set, text='Refresh')
+        atframe.refreshbutton.grid(column=0, row=1, sticky=tk.W+tk.E+tk.S)
+        atframe.grid_remove()
+        autotracker.register_gui(infostring, atframe, infotext, refresh)
+        at = threading.Thread(
+            target=autotracker.thread, name='Autotracker',
+            kwargs={'windows': {'item': self._windows['items']}})
+        at.start()
 
     def _update_check(self) -> None:
         '''

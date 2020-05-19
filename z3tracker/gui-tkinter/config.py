@@ -8,6 +8,7 @@ import tkinter.ttk as ttk
 import tkinter.messagebox as tkmbox
 import typing
 
+from .. import autotracker
 from ..config import CONFIG
 from ..config.default import DEFAULT
 
@@ -32,6 +33,7 @@ class ConfigWindow(tk.Toplevel):
         entries: current string config choices
         boolentries: current boolean config choices
         texts: texts display for config options
+        usb2snes: QUsb2snes device selection
     '''
 
     def __init__(self, tracker):
@@ -60,25 +62,38 @@ class ConfigWindow(tk.Toplevel):
 
         sec = ttk.LabelFrame(
             col, padding=PADDING,
-            text='Program settings (requires restart)')
+            text='Display settings (requires restart)')
         sec.grid(column=0, row=0, sticky=tk.E+tk.W)
         self.widgets.append(sec)
 
         self._make_entry(0, sec, 'Font size', 'font_size')
         self._make_entry(1, sec, 'Item/Dungeon tracker size', 'icon_size')
         self._make_entry(2, sec, 'Maps size', 'map_size')
+        self._make_check(3, sec, 'Autotracker debug log', 'usb2snes_debug')
+
+        sec = ttk.LabelFrame(
+            col, padding=PADDING,
+            text='Program settings')
+        sec.grid(column=0, row=1, sticky=tk.E+tk.W)
+        self.widgets.append(sec)
+
+        self._make_check(0, sec, 'Autotracker', 'autotracking')
+        self.usb2snes = self._make_option(
+            1, sec, 'Tracking source', (), 'usb2snes_device')
+        self._update_usb2snes()
 
         sec = ttk.LabelFrame(
             col, padding=PADDING, text='File information')
-        sec.grid(column=0, row=1, sticky=tk.E+tk.W)
+        sec.grid(column=0, row=2, sticky=tk.E+tk.W)
         self.widgets.append(sec)
 
         self._make_display(0, sec, 'GUI module', 'gui')
         self._make_display(1, sec, 'Autosave', 'autosave')
         self._make_display(
             2, sec, 'Item/Dungeon tracker layout', 'button_layout')
-        self._make_display(
-            3, sec, 'Window layout', 'window_layout')
+        self._make_display(3, sec, 'Window layout', 'window_layout')
+        self._make_entry(4, sec, 'Path trace log', 'path_trace')
+        self._make_display(5, sec, 'QUsb2snes address', 'usb2snes_server')
 
         col = ttk.Frame(self.frame)
         col.grid(column=1, row=0, sticky=tk.E+tk.W+tk.N)
@@ -113,6 +128,7 @@ class ConfigWindow(tk.Toplevel):
             ('Randomised', 'Assured', 'Vanilla', 'Swordless'),
             'swords')
         self._make_check(7, sec, 'Enemiser', 'enemiser')
+        self._make_check(8, sec, 'Shop-sanity', 'shopsanity')
 
         sec = ttk.LabelFrame(
             col, padding=PADDING, text='Display settings')
@@ -130,6 +146,14 @@ class ConfigWindow(tk.Toplevel):
         okbutton.grid(column=col, row=0, sticky=tk.E)
         cancelbutton.grid(column=1 - col, row=0, sticky=tk.E)
         self.widgets.extend((buttonframe, okbutton, cancelbutton))
+
+    def deiconify(self) -> None:
+        '''
+        Update options when opening this window.
+        '''
+
+        self._update_usb2snes()
+        super().deiconify()
 
     def _make_entry(
             self, location: int, parent: ttk.LabelFrame, displaytext: str,
@@ -233,6 +257,54 @@ class ConfigWindow(tk.Toplevel):
         self.entries[configoption] = entryvar
         self.texts[configoption] = displaytext
         self.widgets.extend((name, spacer, entry))
+
+    def _make_option(
+            self, location: int, parent: ttk.LabelFrame, displaytext: str,
+            options: set, configoption: str,
+            disable: bool = False) -> ttk.OptionMenu:
+        '''
+        Make option menu selection.
+
+        Args:
+            location: row on GUI
+            parent: parent widgets
+            displaytext: text to show in config window
+            options: list of available options
+            configoption: corresponding config option
+            bool: True if menu should be disabled
+        Returns:
+            ttk.OptionMenu: created widget
+        '''
+
+        name = ttk.Label(parent, text=displaytext)
+        name.grid(column=0, row=location, sticky=tk.W)
+        spacer = ttk.Label(parent, width=SPACERWIDTH)
+        spacer.grid(column=1, row=location, sticky=tk.W)
+        entryvar = tk.StringVar()
+        entryvar.set(str(CONFIG[configoption]))
+        entry = ttk.OptionMenu(parent, entryvar, *options)
+        entry['menu'].configure(font=FONT)
+        if disable:
+            entry.configure(state='disabled')
+        entry.grid(column=2, row=location, sticky=tk.W+tk.E)
+        self.entries[configoption] = entryvar
+        self.texts[configoption] = displaytext
+        self.widgets.extend((name, spacer, entry))
+        return entry
+
+    def _update_usb2snes(self) -> None:
+        '''
+        Update available QUsb2snes devices.
+        '''
+
+        self.usb2snes['menu'].delete(0, 'end')
+        devices = list(autotracker.DEVICES)
+        devices.remove('')
+        devices.extend(('SD2SNES', 'Retroarch', 'SNES9X', 'Bizhawk'))
+        for dev in devices:
+            self.usb2snes['menu'].add_command(
+                label=dev,
+                command=tk._setit(self.entries['usb2snes_device'], dev))
 
     def withdraw(self) -> None:
         '''

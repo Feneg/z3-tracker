@@ -2,9 +2,10 @@
 World state tracker
 '''
 
+import os.path
 import typing
 
-from ..config import CONFIG
+from ..config import CONFIG, CONFIGDIRECTORY
 from ..dungeons import lists as dungeonlists
 from .. import entrances
 from .. import maps
@@ -228,6 +229,8 @@ class Tracker(object):
             gametype = 'entrance'
         elif CONFIG['world_state'] == 'Retro':
             gametype = 'item_retro'
+        elif CONFIG['shopsanity']:
+            gametype = 'item_shop'
         else:
             gametype = 'item'
         self.maps[maptype].place_buttons(
@@ -317,6 +320,8 @@ class Tracker(object):
         keychecked = {loc: set() for loc in self.ruleset.dungeons}
         hadkey = dict.fromkeys(self.ruleset.dungeons.keys(), False)
         maybedungeons = set()
+        asrabbit = set()
+        pathtrace = {s: [] for s in self.startpoint}
 
         # Go through locations.
         while reachable:
@@ -333,6 +338,8 @@ class Tracker(object):
                 else:
                     available[current] = 'available'
             self.ruleset[current].checked = True
+            if 'rabbit' in state:
+                asrabbit.add(current)
 
             # Add fixed keys.
             if self.ruleset[current].type == 'dungeonkey':
@@ -340,7 +347,7 @@ class Tracker(object):
                 hadkey[self.ruleset[current].dungeon] = True
 
             # Add chest keys.
-            if (not 'random_smallkey' in self.settings and
+            if ('random_smallkey' not in self.settings and
                 self.ruleset[current].type.startswith('dungeonchest') and
                 self.ruleset[self.ruleset[current].dungeon].type == 'dungeon'):
                 keypools = self.ruleset[self.ruleset[current].dungeon].keypools
@@ -380,18 +387,37 @@ class Tracker(object):
 
                 # Don't recheck already visited locations.
                 if self.ruleset[link].checked:
-                    continue
+                    if 'rabbit' in state or link not in asrabbit:
+                        continue
+
+                # Add Moon Pearl check if going into overworld.
+                reqs = self.ruleset[current].link[link][:]
+                if (self.ruleset[current].type == 'interior' and
+                    self.ruleset[link].type.startswith('entrance')):
+                    if (('inverted' not in self.settings and
+                         self.ruleset[link].map == 'dark') or
+                        ('inverted' in self.settings and
+                         self.ruleset[link].map == 'light')):
+                        reqs = [
+                            ('and', [('or', reqs), ('state', 'rabbit;add')])]
+                    else:
+                        reqs = [
+                            ('and', [('or', reqs), ('state', 'rabbit;dis')])]
 
                 # Parse requirement.
                 newstate = state.copy()
                 try:
                     ret, addstate = self._parse_requirement(
-                        self.ruleset[current].link[link], state, None, keys)
+                        reqs, state, None, keys)
                 except _DelayCheck as err:
                     newlink = (link, _Connection(
                         self.ruleset[current].link[link], state))
                     if newlink not in delayed[err.delayclass]:
                         delayed[err.delayclass].append(newlink)
+                        if CONFIG['path_trace']:
+                            newpath = pathtrace[current][:]
+                            newpath.append((current, newstate))
+                            pathtrace[link] = newpath
                     ret = False
                 if ret:
                     for retstate in addstate:
@@ -405,6 +431,12 @@ class Tracker(object):
                     newlink = _Connection(link, newstate)
                     if newlink not in reachable:
                         reachable.append(newlink)
+                        if CONFIG['path_trace']:
+                            newpath = pathtrace[current][:]
+                            newpath.append((current, newstate))
+                            pathtrace[link] = newpath
+                    if link in asrabbit:
+                        asrabbit.remove(link)
 
             # Check visible locations.
             for link in self.ruleset[current].visible:
@@ -453,12 +485,19 @@ class Tracker(object):
                                 delayed[delayclass].pop(idx)[0], newstate)
                             if newlink not in reachable:
                                 reachable.append(newlink)
+                            elif CONFIG['path_trace'] and link in pathtrace:
+                                del pathtrace[current]
+                            if link in asrabbit:
+                                asrabbit.remove(link)
                             break
                     if reachable:
                         break
 
         # Send updated availability to map displays.
         self.update_buttons(available, visible)
+
+        if CONFIG['path_trace']:
+            _store_pathtrace(pathtrace)
 
     def _parse_requirement(
             self, req: typing.Sequence[typing.Sequence], state: typing.Sequence,
@@ -660,7 +699,7 @@ class Tracker(object):
                 assert statestr[0] in ('rabbit', 'maybe')
                 if statestr[0] == 'maybe' and not nodelay:
                     raise _DelayCheck('maybe')
-                addstate.append(statestr[0])
+                addstate.append(robj)
                 result.append(True)
 
             # rabbitbarrier
@@ -986,3 +1025,29 @@ class _Connection(object):
         '''
 
         return self.name, self.state
+
+
+def _store_pathtrace(pathtrace: dict) -> None:
+    '''
+    Store pathtrace in file.
+
+    Args:
+        pathtrace: path trace
+    '''
+
+    assert CONFIG['path_trace']
+    output = []
+    for location in pathtrace:
+        output.append('[{0:s}]\n'.format(location))
+        first = True
+        for path, states in pathtrace[location]:
+            output.append('{0:s}{1:s}{2:s}\n'.format(
+                '    ' if first else '--> ',
+                path,
+                ('  +  {0:s}'.format(', '.join(s for s in states))
+                 if states else '')))
+            first = False
+        output.append('\n')
+    del output[-1]
+    with open(os.path.join(CONFIGDIRECTORY, CONFIG['path_trace']), 'w') as fid:
+        fid.writelines(output)

@@ -51,7 +51,7 @@ class Ruleset(dict):
         Return a list of locations to be displayed on a map.
 
         Args:
-            gametype: 'item' or 'entrance'
+            gametype: 'item', 'item_shop', 'item_retro' or 'entrance'
             maptype: 'light' or 'dark'
             majoronly: only return major item locations
         Returns:
@@ -59,10 +59,14 @@ class Ruleset(dict):
                 'location name': {'map': str, 'coord': (int, int), 'type': str}}
         '''
 
-        assert gametype in ('item', 'item_retro', 'entrance')
+        assert gametype in ('item', 'item_shop', 'item_retro', 'entrance')
         assert maptype in ('light', 'dark')
         if gametype == 'item':
             valid = 'chest', 'item', 'cave', 'drop', 'dungeon', 'ganon'
+        elif gametype == 'item_shop':
+            valid = (
+                'chest', 'item', 'cave', 'drop', 'dungeon', 'ganon',
+                'entrance_shop')
         elif gametype == 'item_retro':
             valid = (
                 'chest', 'item', 'cave', 'drop', 'dungeon', 'ganon', 'entrance',

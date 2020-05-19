@@ -124,7 +124,7 @@ class DungeonWindow(tk.Toplevel):
 
         widget = Dungeon(dungeon, self.frame, self.scaling)
         widget.bind(
-            '<Enter>', lambda _: self.helpertext.set(dungeon.identifier))
+            '<Enter>', lambda _: self.helpertext.set(self._namestring(dungeon)))
         widget.bind(
             '<Leave>', lambda _: self.helpertext.set(''))
 
@@ -141,6 +141,19 @@ class DungeonWindow(tk.Toplevel):
         widget.grid(
             column=dungeon.location[0], row=dungeon.location[1], sticky=misc.A)
         self.widgets.append(widget)
+
+    def _namestring(self, dungeon) -> str:
+        '''
+        Return helper string.
+
+        Args:
+            dungeon: dungeon object
+        Returns:
+            str: string to display on GUI
+        '''
+
+        return '{0:s} ({1:s})'.format(
+            dungeon.identifier, dungeon.idstr)
 
     def reset(self) -> None:
         '''

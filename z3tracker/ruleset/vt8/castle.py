@@ -276,7 +276,7 @@ LOCATIONS = {
         'link': {
             'Castle Tower Entrance (E)': [('nosettings', 'inverted')],
             "Ganon's Tower Entrance (E)": [('settings', 'inverted')],
-            'Castle Tower Ascent 1': []}
+            'Castle Tower Ascent 1': [('rabbitbarrier', None)]}
     },
     'Castle Tower Ascent 1': {
         'type': 'area', 'dungeon': 'Castle Tower',

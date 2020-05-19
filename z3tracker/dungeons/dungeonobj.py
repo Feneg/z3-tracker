@@ -20,6 +20,7 @@ class DungeonObj(object):
         icon: name of dungeon image
         features: additional features of dungeon
         tracker: world state tracker
+        idstr: dungeon code
         smallkeys: number of collected small keys
         bigkey: whether big key is collected or not
         chests: number of collected chests
@@ -32,7 +33,8 @@ class DungeonObj(object):
         'smallkeys', 'bigkey', 'chests', 'reward', 'completed', 'medallion')
 
     def __init__(self, name: str, location: (int, int), totalkeys: int,
-                 icon: str, features: typing.Sequence[str], tracker):
+                 icon: str, features: typing.Sequence[str], tracker,
+                 idstr: str):
         '''
         Args:
             name: name of dungeon
@@ -41,6 +43,7 @@ class DungeonObj(object):
             icon: icon image of dungeon
             features: list of features of dungeon
             tracker: world state tracker
+            idstr: dungeon code
         '''
 
         self.identifier = name
@@ -49,6 +52,7 @@ class DungeonObj(object):
         self.icon = image(icon)
         self.features = features
         self.tracker = tracker
+        self.idstr = idstr
         self.reset()
 
     def reset(self) -> None:

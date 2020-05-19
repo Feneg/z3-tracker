@@ -4,9 +4,12 @@ Item/dungeon tracker saving
 
 import json
 import os.path
+import threading
 
 from ..config import CONFIG, CONFIGDIRECTORY
 from ..version import __version__ as version
+
+DATALOCK = threading.RLock()
 
 __all__ = (
     'load_items', 'load_dungeons', 'load_locations', 'load_entrances'
@@ -81,17 +84,18 @@ def _load_save() -> dict:
         dict: save data
     '''
 
-    try:
-        fid = open(os.path.join(CONFIGDIRECTORY, CONFIG['autosave']), 'r')
-    except FileNotFoundError:
-        return {}
+    with DATALOCK:
+        try:
+            fid = open(os.path.join(CONFIGDIRECTORY, CONFIG['autosave']), 'r')
+        except FileNotFoundError:
+            return {}
 
-    try:
-        data = json.load(fid)
-    except json.JSONDecodeError:
-        return {}
-    finally:
-        fid.close()
+        try:
+            data = json.load(fid)
+        except json.JSONDecodeError:
+            return {}
+        finally:
+            fid.close()
 
     if data['version'] != version:
         return {}
@@ -151,9 +155,11 @@ def _store_save(data: dict) -> None:
         data: save data
     '''
 
-    savedata = _load_save()
-    for dtype in data:
-        savedata[dtype] = data[dtype]
-    savedata['version'] = version
-    with open(os.path.join(CONFIGDIRECTORY, CONFIG['autosave']), 'w') as fid:
-        json.dump(savedata, fid)
+    with DATALOCK:
+        savedata = _load_save()
+        for dtype in data:
+            savedata[dtype] = data[dtype]
+        savedata['version'] = version
+        with open(
+                os.path.join(CONFIGDIRECTORY, CONFIG['autosave']), 'w') as fid:
+            json.dump(savedata, fid)

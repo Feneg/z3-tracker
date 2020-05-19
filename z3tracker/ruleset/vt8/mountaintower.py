@@ -10,8 +10,7 @@ LOCATIONS = {
         'type': 'entrance_dungeon', 'map': 'light', 'coord': (372, 35),
         'link': {
             'West Upper Mount Hebra': [],
-            'Mountain Tower Entrance (I)': [('nosettings', 'inverted')],
-            'Castle Tower Entrance (E)': [('settings', 'inverted')]}
+            'Mountain Tower Entrance (I)': []}
     },
     'Mountain Tower Entrance (I)': {
         'type': 'interior',
