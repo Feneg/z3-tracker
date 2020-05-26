@@ -130,6 +130,10 @@ class Tracker(object):
             self.settings.add('random_smallkey')
         if CONFIG['dungeon_items'] == 'Keysanity':
             self.settings.add('random_bigkey')
+        if CONFIG['dungeon_items'] == 'Custom':
+            for di in ('map', 'compass', 'smallkey', 'bigkey'):
+                if CONFIG[f'shuffle_{di:s}']:
+                    self.settings.add(f'random_{di:s}')
         self.settings.add('goal_{0:s}'.format(
             {'Defeat Ganon': 'ganon', 'Fast Ganon': 'fastganon',
              'All Dungeons': 'dungeons', 'Master Sword Pedestal': 'pedestal',

@@ -7,6 +7,9 @@ import logging as log
 import tkinter as tk
 import tkinter.ttk as ttk
 
+from ..config import CONFIG
+
+FOREGROUND = CONFIG['foreground']
 FRAME = None
 INFOSTRING = None
 INFOTEXT = None
@@ -64,13 +67,21 @@ class AutotrackToggle(ttk.Label):
     '''
 
     def __init__(self, *args, **kwargs):
-        self.toggle = True
+        '''
+        Args:
+            default: default state; True means autotracking enabled
+            args, kwargs: arguments of ttk.Label()
+        '''
+
+        self.toggle = kwargs['default']
         self.attext = tk.StringVar()
+        del kwargs['default']
         kwargs.update({'borderwidth': 1, 'textvariable': self.attext})
         super().__init__(*args, **kwargs)
-        self.defaultcolour = self.cget('background')
+        self.defaultcolour = CONFIG['background']
         self.bind('<ButtonRelease-1>',
                   lambda _: self.set_autotracking(not self.toggle))
+        self.disable()
 
     def disable(self) -> None:
         '''
@@ -102,7 +113,7 @@ class AutotrackToggle(ttk.Label):
         else:
             self.attext.set(' Manual ')
             self.configure(
-                background=self.defaultcolour, foreground='black')
+                background=self.defaultcolour, foreground=FOREGROUND)
 
     def set_state(self, state: str) -> None:
         '''

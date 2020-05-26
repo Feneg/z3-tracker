@@ -12,6 +12,9 @@ from ..config.images import image, makebw
 from .. import dungeons
 common = importlib.import_module(
     '..gui-common.dungeons', package=__package__)
+
+BACKGROUND = CONFIG['background']
+FOREGROUND = CONFIG['foreground']
 REWARDS = common.REWARDS
 
 from .config import FATFONT
@@ -43,16 +46,17 @@ class DungeonWindow(tk.Toplevel):
 
         self.tracker = tracker
 
-        self.frame = ttk.Frame(self)
+        self.frame = ttk.Frame(self, style='themed.TFrame')
         self.frame.pack(side='top', fill='both', expand=True)
 
-        self.bottomframe = ttk.Frame(self)
+        self.bottomframe = ttk.Frame(self, style='themed.TFrame')
         self.bottomframe.pack(side='top', fill='x', expand=True)
-        self.helperframe = ttk.Frame(self.bottomframe)
+        self.helperframe = ttk.Frame(self.bottomframe, style='themed.TFrame')
         self.helperframe.pack(side='left', fill='x', expand=True)
         self.helpertext = tk.StringVar()
         self.helper = ttk.Label(
-            self.helperframe, anchor=tk.CENTER, textvariable=self.helpertext)
+            self.helperframe, anchor=tk.CENTER, style='themed.TLabel',
+            textvariable=self.helpertext)
         self.helper.pack(side='left', fill='x', expand=True)
 
         self.scaling = _scale_factors()
@@ -67,7 +71,9 @@ class DungeonWindow(tk.Toplevel):
                     file=image('ganonstower'),
                     master=self.bottomframe)).subsample(2, 2),
             'canvas': tk.Canvas(
-                self.bottomframe, height=32 * scale, width=48 * scale),
+                self.bottomframe, background=BACKGROUND,
+                height=32 * scale, highlightbackground=BACKGROUND,
+                width=48 * scale),
             'count': -1}
         self.ganoncrystals['image'] = self.ganoncrystals['canvas'].create_image(
             0, 0, anchor=tk.NW, image=self.ganoncrystals['icon'])
@@ -84,12 +90,18 @@ class DungeonWindow(tk.Toplevel):
         self.ganoncrystals['canvas'].pack(side='right')
         self.set_crystal('ganon', 0)
 
+        self.crystalspacer = ttk.Label(
+            self.bottomframe, style='themed.TLabel', width=-2)
+        self.crystalspacer.pack(side='right')
+
         self.towercrystals = {
             'icon': _icon_scale(
                 tk.PhotoImage(
                     file=image('reward-crystal'), master=self.bottomframe)),
             'canvas': tk.Canvas(
-                self.bottomframe, height=32 * scale, width=48 * scale),
+                self.bottomframe, background=BACKGROUND,
+                height=32 * scale, highlightbackground=BACKGROUND,
+                width=48 * scale),
             'count': -1}
         self.towercrystals['image'] = self.towercrystals['canvas'].create_image(
             0, 0, anchor=tk.NW, image=self.towercrystals['icon'])
@@ -195,8 +207,8 @@ class DungeonWindow(tk.Toplevel):
             newtext = str(cobj['count'])
         cobj['canvas'].delete(cobj['text'])
         cobj['text'] = cobj['canvas'].create_text(
-            48 * scale, 32 * scale, anchor=tk.SE, font=FATFONT,
-            text=newtext)
+            48 * scale, 32 * scale, anchor=tk.SE,
+            fill=FOREGROUND, font=FATFONT, text=newtext)
 
 
 class Dungeon(ttk.Frame):
@@ -215,15 +227,17 @@ class Dungeon(ttk.Frame):
         self.scaling = scaling
         scale = scaling[0] / scaling[1]
 
-        super().__init__(parent, borderwidth=2, relief=tk.RIDGE)
-        self.child = ttk.Label(self)
+        super().__init__(
+            parent, borderwidth=2, relief=tk.RIDGE, style='themed.TFrame')
+        self.child = ttk.Label(self, style='themed.TLabel')
         self.child.grid(column=0, row=0, sticky=misc.A)
 
         icon = self._icon_scale(
             tk.PhotoImage(file=dungeon.icon, master=parent)
             if dungeon.icon else None)
         self.pic = ttk.Label(
-            self.child, borderwidth=1, image=icon, relief=tk.RAISED)
+            self.child, borderwidth=1, image=icon, relief=tk.RAISED,
+            style='themed.TLabel')
         self.pic.grid(column=0, row=0, columnspan=2, rowspan=2)
         self.icon = icon
 
@@ -232,7 +246,8 @@ class Dungeon(ttk.Frame):
         self.rewardicon = self._icon_scale(
             tk.PhotoImage(file=image(self.rewardimg), master=self))
         self.reward = tk.Canvas(
-            self.child, height=32 * scale, width=32 * scale)
+            self.child, background=BACKGROUND, height=32 * scale,
+            highlightbackground=BACKGROUND, width=32 * scale)
         if 'reward' in dungeon.features:
             self.rewardid = self.reward.create_image(
                 0, 0, anchor=tk.NW, image=self.rewardicon)
@@ -243,11 +258,12 @@ class Dungeon(ttk.Frame):
         self.reward.grid(column=2, row=0)
 
         self.complete = tk.Canvas(
-            self.child, height=32 * scale, width=32 * scale)
+            self.child, background=BACKGROUND, height=32 * scale,
+            highlightbackground=BACKGROUND, width=32 * scale)
         self.complete.create_rectangle(
             4 * scale + 1, 4 * scale + 1,
             int(32 * scale) - 5, int(32 * scale) - 5,
-            width=int(round(4 * scale)))
+            outline=FOREGROUND, width=int(round(4 * scale)))
         self.completeid = None
         self.complete.bind(
             '<ButtonRelease-1>', lambda _: dungeon.mark_complete(True))
@@ -261,7 +277,8 @@ class Dungeon(ttk.Frame):
                 file=image('medallion-{0:s}'.format(self.medallionname)),
                 master=self))
         self.medallion = tk.Canvas(
-            self.child, height=32 * scale, width=32 * scale)
+            self.child, background=BACKGROUND, height=32 * scale,
+            highlightbackground=BACKGROUND, width=32 * scale)
         if 'medallion' in dungeon.features:
             self.medallionid = self.medallion.create_image(
                 0, 0, anchor=tk.NW, image=self.medallionicon)
@@ -274,9 +291,12 @@ class Dungeon(ttk.Frame):
         self.bigkeyicon = self._icon_scale(
             tk.PhotoImage(file=image('bigkey'), master=parent))
         self.bigkey = tk.Canvas(
-            self.child, height=32 * scale, width=32 * scale)
-        if ('bigkey' in dungeon.features and
-            CONFIG['dungeon_items'] == 'Keysanity'):
+            self.child, background=BACKGROUND, height=32 * scale,
+            highlightbackground=BACKGROUND, width=32 * scale)
+        if ('bigkey' in dungeon.features and (
+                CONFIG['dungeon_items'] == 'Keysanity' or (
+                    CONFIG['dungeon_items'] == 'Custom' and
+                    CONFIG['shuffle_bigkey']))):
             self.bigkeyid = self.bigkey.create_image(
                 0, 0, anchor=tk.NW, image=self.bigkeyicon)
             self.bigkey.bind('<ButtonRelease-1>', dungeon.toggle_bigkey)
@@ -286,11 +306,14 @@ class Dungeon(ttk.Frame):
         self.keyicon = self._icon_scale(
             tk.PhotoImage(file=image('smallkey'), master=parent))
         self.key = tk.Canvas(
-            self.child, height=32 * scale, width=48 * scale)
-        if (dungeon.totalkeys > 0 and
-            CONFIG['dungeon_items'] in (
-                'Maps/Compasses/Small Keys', 'Keysanity') and
-            CONFIG['world_state'] != 'Retro'):
+            self.child, background=BACKGROUND, height=32 * scale,
+            highlightbackground=BACKGROUND, width=48 * scale)
+        if (dungeon.totalkeys > 0 and (
+                CONFIG['dungeon_items'] in (
+                    'Maps/Compasses/Small Keys', 'Keysanity') or (
+                        CONFIG['dungeon_items'] == 'Custom' and
+                        CONFIG['shuffle_smallkey']))
+            and CONFIG['world_state'] != 'Retro'):
             self.keyimg = self.key.create_image(
                 0, 0, anchor=tk.NW, image=self.keyicon)
             self.keytext = self.key.create_text(
@@ -302,7 +325,8 @@ class Dungeon(ttk.Frame):
         self.itemicon = self._icon_scale(
             tk.PhotoImage(file=image('chest_full'), master=parent))
         self.item = tk.Canvas(
-            self.child, height=32 * scale, width=48 * scale)
+            self.child, background=BACKGROUND, height=32 * scale,
+            highlightbackground=BACKGROUND, width=48 * scale)
         if dungeon.total_items() > 0:
             self.itemimg = self.item.create_image(
                 0, 0, anchor=tk.NW, image=self.itemicon)
@@ -310,8 +334,11 @@ class Dungeon(ttk.Frame):
                 48 * scale, 32 * scale, anchor=tk.SE, text='0')
             self.item.bind('<ButtonRelease-1>', dungeon.item_up)
             self.item.bind('<ButtonRelease-3>', dungeon.item_down)
-        if CONFIG['dungeon_items'] in (
-                'Maps/Compasses/Small Keys', 'Keysanity'):
+        if (CONFIG['dungeon_items'] in (
+                'Maps/Compasses/Small Keys', 'Keysanity') or (
+                    CONFIG['dungeon_items'] == 'Custom' and (
+                        CONFIG['shuffle_smallkey'] or
+                        CONFIG['shuffle_bigkey']))):
             self.item.grid(column=4, columnspan=2, row=1)
         else:
             self.item.grid(column=3, columnspan=2, row=1)
@@ -348,7 +375,7 @@ class Dungeon(ttk.Frame):
             self.completeid = self.complete.create_text(
                 int(32 * self.scaling[0] / self.scaling[1] / 2),
                 int(32 * self.scaling[0] / self.scaling[1] / 2),
-                anchor=tk.CENTER,
+                anchor=tk.CENTER, fill=FOREGROUND,
                 font=(FATFONT[0],
                       int(round(20 * self.scaling[0] / self.scaling[1]))),
                 text='✔')
@@ -356,7 +383,8 @@ class Dungeon(ttk.Frame):
             self.complete.delete(self.completeid)
             self.completeid = None
         self.pic = ttk.Label(
-            self.child, borderwidth=1, image=icon, relief=tk.RAISED)
+            self.child, borderwidth=1, image=icon, relief=tk.RAISED,
+            style='themed.TLabel')
         self.pic.grid(column=0, row=0, columnspan=2, rowspan=2)
         self.icon = icon
 
@@ -393,7 +421,7 @@ class Dungeon(ttk.Frame):
             pass
         else:
             self.keytext = self.key.create_text(
-                48 * scale, 32 * scale, anchor=tk.SE,
+                48 * scale, 32 * scale, anchor=tk.SE, fill=FOREGROUND,
                 font=FATFONT, text=str(dungeon.smallkeys))
 
         # Check numbers (items).
@@ -406,7 +434,8 @@ class Dungeon(ttk.Frame):
                 (FATFONT[0], int(FATFONT[1] / 2)) if dungeon.remaining() > 9
                 else FATFONT)
             self.itemtext = self.item.create_text(
-                48 * scale, 32 * scale, anchor=tk.SE, font=itemfont,
+                48 * scale, 32 * scale, anchor=tk.SE,
+                fill=FOREGROUND, font=itemfont,
                 text=str(dungeon.remaining()))
             newchest = (
                 'chest_full' if dungeon.remaining() > 0 else 'chest_empty')

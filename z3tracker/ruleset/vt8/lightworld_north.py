@@ -108,8 +108,7 @@ LOCATIONS= {
                 ('and', [('settings', 'inverted'), ('rabbitbarrier', None)]),
                 ('and', [
                     ('glitch', 'overworld'), ('item', 'pegasus')])],
-            "King's Tomb Entrance (E)": [('and', [
-                ('item', 'titansmitts'), ('item', 'pegasus')])],
+            "King's Tomb Exterior": [('item', 'titansmitts')],
             'North Fairy Pond Drop Entrance (E)': [('rabbitbarrier', None)],
             'North Fairy Pond Cave Entrance (E)': [],
             'Witch Hut River': [('item', 'flippers')],
@@ -289,10 +288,18 @@ LOCATIONS= {
         'link': {
             'Graveyard Cave Front': []}
     },
+    "King's Tomb Exterior": {
+        'type': 'area',
+        'link': {
+            'Haunted Graveyard': [('and', [
+                ('settings', 'inverted'), ('item', 'mirror')])],
+            'North Light World': [('item', 'titansmitts')],
+            "King's Tomb Entrance (E)": [('item', 'pegasus')]}
+    },
     "King's Tomb Entrance (E)": {
         'type': 'entrance_unique', 'map': 'light', 'coord': (399, 197),
         'link': {
-            'North Light World': [('item', 'titansmitts')],
+            "King's Tomb Exterior": [],
             "King's Tomb Entrance (I)": []}
     },
     "King's Tomb Entrance (I)": {

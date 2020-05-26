@@ -3,6 +3,7 @@ Main autotracker process
 '''
 
 import asyncio
+import importlib
 import logging as log
 import queue
 import threading
@@ -10,8 +11,10 @@ import threading
 from ..config import CONFIG
 
 from .exceptions import AutotrackerException, NoConnection, ParseError, NoDevice
-from . import gui
 from . import usb2snes
+
+gui = importlib.import_module(
+    '..{0:s}.autotracker'.format(CONFIG['gui']), package=__package__)
 
 DATA = {'items': queue.Queue()}
 INTERFACES = {'items': None}
@@ -103,6 +106,9 @@ async def _main() -> None:
                 gui.set_info('Lost connection to QUsb2snes.', 'error')
                 quick_retry = True
             else:
+                if STOP.is_set():
+                    log.info('Autotracker stopped.')
+                    return
                 log.info(
                     '%s autotracker.',
                     'Restarting' if CONFIG['autotracking'] else 'Stopping')
@@ -132,10 +138,12 @@ async def _main() -> None:
                     break
             counter -= 1
         else:
-            if not STOP.is_set():
-                log.debug('Restarting autotracker.')
-                gui.set_info('')
-                continue
+            if STOP.is_set():
+                log.info('Autotracker stopped.')
+                return
+            log.debug('Restarting autotracker.')
+            gui.set_info('')
+            continue
         gui.set_info('')
         log.info('Autotracker stopped.')
 

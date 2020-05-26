@@ -13,8 +13,10 @@ from ..config import CONFIG
 
 from . import addresses
 from .exceptions import AutotrackerException, NoConnection, ParseError, NoDevice
-from . import gui
 from .items import ITEMS
+
+gui = importlib.import_module(
+    '..{0:s}.autotracker'.format(CONFIG['gui']), package=__package__)
 
 CONNECTED = threading.Event()
 DEVICES = {''}

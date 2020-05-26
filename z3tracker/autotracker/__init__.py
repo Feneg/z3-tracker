@@ -6,15 +6,14 @@ Autotracker
 import importlib
 import logging as log
 import threading
-import tkinter
-import tkinter.ttk
 
 from ..config import CONFIG
-
 log.basicConfig(level=log.DEBUG if CONFIG['usb2snes_debug'] else log.INFO)
 
-from . import gui
-from .gui import set_info, AutotrackToggle
+gui = importlib.import_module(
+    '..{0:s}.autotracker'.format(CONFIG['gui']), package=__package__)
+set_info = gui.set_info
+AutotrackToggle = gui.AutotrackToggle
 
 __all__ = ['set_info', 'AutotrackToggle']
 
@@ -49,8 +48,8 @@ else:
 __all__.extend(('CONNECTED', 'DEVICES', 'INTERFACES', 'STOP', 'register_gui'))
 
 
-def register_gui(infostring: tkinter.StringVar, atframe: tkinter.ttk.LabelFrame,
-                 infotext: tkinter.ttk.Label, refresh=threading.Event) -> None:
+def register_gui(
+        infostring, atframe, infotext, refresh=threading.Event) -> None:
     '''
     Register autotracker GUI handle.
 

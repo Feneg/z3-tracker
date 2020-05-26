@@ -16,3 +16,6 @@ def init() -> None:
 
     style = ttk.Style()
     style.configure('.', font=FONT)
+    for wtype in ('Frame', 'Label'):
+        style.configure(f'themed.T{wtype:s}', background=CONFIG['background'],
+                        foreground=CONFIG['foreground'])

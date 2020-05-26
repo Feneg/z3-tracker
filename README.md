@@ -41,9 +41,9 @@ z3-tracker will work without these, but autotracking won't be available.
 
 Autotracking in z3-tracker depends on the Python websockets module. This library enables z3-tracker to communicate with QUsb2snes.
 
-The easiest cross-platform way to install websockets is pip. In Windows, open CMD (on Windows 10: right-click Windows button → 'Command Prompt'). On Linux and Mac OS, open a terminal. Then type: 'pip3 install --user websockets'. That's it. (You might encounter a warning informing you that pip is out of date. For the purpose of running z3-tracker, you can safely ignore this message.)
+The easiest cross-platform way to install websockets is the 'install_websockets.py' script included with z3-tracker. You can run it by simply double-clicking, or via commandline (`python3 install_websockets.py`). You might encounter a message informing you that pip is out of date. For the purpose of running z3-tracker, you can safely ignore this message.
 
-Most Linux distribution also distribute it via their package manager under names like 'python3-websockets' (Debian, Ubuntu, Fedora) or 'python-websockets' (Arch).
+Most Linux distribution also distribute websockets via their package manager under names like 'python3-websockets' (Debian, Ubuntu, Fedora) or 'python-websockets' (Arch). If you're on Linux, you should probably use your distribution's package instead.
 
 ###### QUsb2snes
 
@@ -70,7 +70,7 @@ In order to allow as much flexibility as possible in the placement of various pa
 * non-glitched and glitched rulesets, although support for glitched modes is limited
 * basic and advanced item placement
 * swordless
-* all four dungeon item modes
+* all combinations of shuffled dungeon items
 * all five goals
 * basic enemy shuffle (but not boss shuffle)
 * Ganon's Tower/Ganon crystal requirements
@@ -133,22 +133,25 @@ Dungeon buttons can't be interacted with. They are controlled via the dungeon tr
 
 Retro includes certain entrance buttons relevant to this mode even if entrance randomiser is switched off. They represent shops and potential take-any caves. In this case these buttons do not offer any functionality beyond left-clicking.
 
+When Retro mode is active, pressing the 'R' key marks all potential take-any caves and shops on the currently selected map as checked. This might come useful once the take-any sword has been found and checking these location isn't of interest anymore.
+
 #### Major items only
 
-This option assumes that only major item locations are shuffled. All locations which do not contain major items in an unmodified game are therefore removed from the maps.
+This option assumes that only major item locations are shuffled -- i.e. all items found in the item tracker plus heart containers. All overworld locations which do not contain such major items in an unmodified game are therefore removed from the maps, and the number of items in dungeons will be reduced (depending on dungeon item settings). That means that Desert Palace can have between two (standard) and six (key-sanity) items in this mode.
 
-##### Autotracking
+### Autotracking
 
-z3-tracker contains autotracking functionality. At time of writing, only items are tracked. In order to enable autotracking, ensure that the python websocket package is installed and available and that [QUsb2snes](https://github.com/Skarsnik/QUsb2snes) is running correctly on port 8080. You can then enable autotracking in the settings and choose a device to track. A status message in the main menu will tell you the current status of the autotracker.
+z3-tracker contains autotracking functionality. At time of writing, only major items are tracked. In order to enable autotracking, ensure that the python websocket package is installed and available and that [QUsb2snes](https://github.com/Skarsnik/QUsb2snes) is running correctly on port 8080. You can then enable autotracking in the settings and choose a device to track. A status message in the main menu will tell you the current status of the autotracker.
 
 Note that the autotracker updates at a fixed interval of about five seconds. That means once you picked up an item, it will take up to five seconds until it will appear on the item menu.
 
 At the bottom of the item window, a button 'Auto' will appear. Its colour depends on the autotracking status:
+
 * blue: autotracker is connected and tracking items
 * orange: autotracker is connected but the game is currently not in a state to allow autotracking or the game isn't running at all
 * red: autotracker could not connect to the console/emulator/QUsb2snes
 
-If you click on the button, you can temporarily switch autotracking off for this window. This will allow you to temporarily use this window manually. Clicking on the button again will switch back to autotracking and wipe any manual changes you made.
+If you click on the button, you can temporarily switch autotracking off for this window. This will allow you to use this window manually. Clicking on the button again will switch back to autotracking and wipe any manual changes you made (once the next periodical update takes place).
 
 To disable autotracking entirely, just uncheck the respective option in the settings.
 
@@ -156,7 +159,7 @@ To disable autotracking entirely, just uncheck the respective option in the sett
 
 ##### Autosaving
 
-While some may have noticed the Save and Load buttons, most users should not need them. z3-tracker stores progress automatically everytime something changes. When z3-tracker is closed and restarted, this autosave is restored.
+While some may have noticed the Save and Load buttons, most users should not need them. z3-tracker stores progress automatically every time something changes. When z3-tracker is closed and restarted, this autosave is restored.
 
 ##### Manual saving and loading
 

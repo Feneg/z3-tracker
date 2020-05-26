@@ -50,9 +50,9 @@ ITEMS = {
     'hammer': 0x34b,
     'shovelocarina': (0x34c, {'step': {
         1: {'flag': (0x38c, 0x04)},
-        2: {'choice': ({'flag': (0x38c, 0x01)}, {'flag': (0x38c, 0x01)})},
+        2: {'choice': ({'flag': (0x38c, 0x01)}, {'flag': (0x38c, 0x02)})},
         3: {'flag': (0x38c, 0x04), 'choice': (
-            {'flag': (0x38c, 0x01)}, {'flag': (0x38c, 0x01)})
+            {'flag': (0x38c, 0x01)}, {'flag': (0x38c, 0x02)})
         }
     }}),
     'bugnet': 0x34d,

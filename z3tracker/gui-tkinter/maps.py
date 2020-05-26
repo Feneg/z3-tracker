@@ -44,7 +44,7 @@ class MapDisplay(tk.Toplevel):
 
         # General initialisation
         assert spec in ('light', 'dark')
-        super().__init__()
+        super().__init__(background=CONFIG['background'])
         self.identifier = spec
         self.scale = CONFIG['map_size']
         self.title('Light World' if spec == 'light' else 'Dark World')
@@ -56,7 +56,8 @@ class MapDisplay(tk.Toplevel):
 
         # Set up bottom text label.
         self.helpertext = tk.StringVar()
-        self.helper = ttk.Label(self, textvariable=self.helpertext)
+        self.helper = ttk.Label(
+            self, textvariable=self.helpertext, style='themed.TLabel')
         self.helper.grid(column=0, row=1, sticky=tk.S)
 
         # Set background image.
@@ -65,7 +66,9 @@ class MapDisplay(tk.Toplevel):
             master=self)
         scaling = MAPSCALE * self.scale
         imgdim = (imagefile.width() * scaling, imagefile.height() * scaling)
-        self.map = tk.Canvas(self, height=imgdim[1], width=imgdim[0])
+        self.map = tk.Canvas(
+            self, background=CONFIG['background'], height=imgdim[1],
+            highlightbackground=CONFIG['background'], width=imgdim[0])
         self.map.grid(column=0, row=0, sticky=misc.A)
         for up in range(1, 1000):
             if not (scaling * up) % 1:
@@ -87,7 +90,8 @@ class MapDisplay(tk.Toplevel):
 
         # Set-up entrance tracker display.
         self.map.bind('<Enter>', self._update_entrance_state)
-        self.map.bind('<Leave>', lambda _: self.helper.configure(background=''))
+        self.map.bind('<Leave>', lambda _: self.helper.configure(
+            background='', foreground=CONFIG['foreground']))
 
         # Only for Retro mode
         self.bind('<r>', lambda _: self._clear_retro())
@@ -180,7 +184,9 @@ class MapDisplay(tk.Toplevel):
         '''
 
         self.helper.configure(
-            background=('yellow' if self.entrancetracker.armed else ''))
+            background=('yellow' if self.entrancetracker.armed else ''),
+            foreground=('black' if self.entrancetracker.armed else
+                        CONFIG['foreground']))
 
     def _hover(self, button: str) -> None:
         '''
@@ -268,11 +274,14 @@ class MapDisplay(tk.Toplevel):
             name: name of clicked on button
         '''
 
+        if not CONFIG['entrance_randomiser']:
+            return
         new = self.entrancetracker.event(name)
         if not new and self.entrancetracker.armed:
-            self.helper.configure(background='yellow')
+            self.helper.configure(background='yellow', foreground='black')
         else:
-            self.helper.configure(background='')
+            self.helper.configure(
+                background='', foreground=CONFIG['foreground'])
         if new:
             self.set_entrance()
 
@@ -285,8 +294,8 @@ class MapDisplay(tk.Toplevel):
         '''
 
         self.entrancetracker.abort(name)
-        self.helper.configure(background='')
-        if name:
+        self.helper.configure(background='', foreground=CONFIG['foreground'])
+        if CONFIG['entrance_randomiser'] and name:
             self.set_entrance()
             self._hover(name)
 
@@ -436,6 +445,8 @@ class MapDisplay(tk.Toplevel):
             linktime: 'entrance', 'interior', 'linked'
         '''
 
+        if not CONFIG['entrance_randomiser']:
+            return
         assert linktype in ('entrance', 'interior', 'linked', 'default')
         if not self.tracker[button]:
             colour = 'checked'

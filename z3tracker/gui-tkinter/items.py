@@ -12,6 +12,9 @@ from .. import items
 
 from . import misc
 
+BACKGROUND = CONFIG['background']
+FOREGROUND = CONFIG['foreground']
+
 __all__ = 'start',
 
 
@@ -39,17 +42,19 @@ class ItemWindow(tk.Toplevel):
 
         self.tracker = tracker
 
-        self.frame = ttk.Frame(self)
+        self.frame = ttk.Frame(self, style='themed.TFrame')
         self.frame.pack(side='top', fill='both', expand=True)
-        self.bottomline = ttk.Frame(self)
+        self.bottomline = ttk.Frame(self, style='themed.TFrame')
         self.bottomline.pack(side='top', fill='x', expand=True)
-        self.autotrack = AutotrackToggle(self.bottomline)
+        self.autotrack = AutotrackToggle(
+            self.bottomline, default=CONFIG['autodefault_items'])
         self.autotrack.pack(side='left')
-        self.helperframe = ttk.Frame(self.bottomline)
+        self.helperframe = ttk.Frame(self.bottomline, style='themed.TFrame')
         self.helperframe.pack(side='right', fill='x', expand=True)
         self.helpertext = tk.StringVar()
         self.helper = ttk.Label(
-            self.helperframe, anchor=tk.CENTER, textvariable=self.helpertext)
+            self.helperframe, anchor=tk.CENTER, style='themed.TLabel',
+            textvariable=self.helpertext)
         self.helper.pack(side='right', fill='x', expand=True)
 
         self.scaling = _scale_factors()
@@ -145,7 +150,9 @@ class ItemButton(tk.Canvas):
         '''
 
         super().__init__(
-            parent, height=64 * scaling[0] / scaling[1],
+            parent, background=BACKGROUND,
+            height=64 * scaling[0] / scaling[1],
+            highlightbackground=BACKGROUND,
             width=64 * scaling[0] / scaling[1])
         self.scaling = scaling
         self.img = None
@@ -176,7 +183,9 @@ class ItemButton(tk.Canvas):
                     bw = sum(icon.get(x, y)) // item.disabled[0]
                     if bw in (0, 255):
                         continue
-                    bw *= item.disabled[1]
+                    bw *= int(
+                        (item.disabled[1] - 1)
+                        * int(BACKGROUND[1:], 16) / 0xd9d9d9) + 1
                     bw = 255 if bw > 255 else int(bw)
                     icon.put('#{0:02x}{0:02x}{0:02x}'.format(bw), (x, y))
         self.img = self.create_image(0, 0, anchor=tk.NW, image=icon)

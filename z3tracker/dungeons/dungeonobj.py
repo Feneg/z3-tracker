@@ -140,9 +140,9 @@ class DungeonObj(object):
             int: number of non-dungeon-specific items
         '''
 
-        if 'majoronly' in self.tracker.settings:
-            return self.tracker.total_chests(self.identifier)
         total_chests = self.tracker.total_chests(self.identifier)
+        if 'majoronly' in self.tracker.settings:
+            total_chests += self.totalkeys
         if 'random_map' not in self.tracker.settings and 'map' in self.features:
             total_chests -= 1
         if ('random_compass' not in self.tracker.settings and

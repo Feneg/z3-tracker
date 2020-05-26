@@ -4,13 +4,14 @@ Config window
 
 import sys
 import tkinter as tk
+import tkinter.colorchooser as tkc
 import tkinter.ttk as ttk
 import tkinter.messagebox as tkmbox
 import typing
 
 from .. import autotracker
 from ..config import CONFIG
-from ..config.default import DEFAULT
+from ..config.default import DEFAULT, CONFLICTS
 
 from . import misc
 
@@ -33,6 +34,7 @@ class ConfigWindow(tk.Toplevel):
         entries: current string config choices
         boolentries: current boolean config choices
         texts: texts display for config options
+        hidden: handles of hidable widgets
         usb2snes: QUsb2snes device selection
     '''
 
@@ -55,6 +57,7 @@ class ConfigWindow(tk.Toplevel):
         self.entries = {}
         self.boolentries = {}
         self.texts = {}
+        self.hidden = {}
 
         col = ttk.Frame(self.frame)
         col.grid(column=0, row=0, sticky=tk.E+tk.W+tk.N)
@@ -70,6 +73,8 @@ class ConfigWindow(tk.Toplevel):
         self._make_entry(1, sec, 'Item/Dungeon tracker size', 'icon_size')
         self._make_entry(2, sec, 'Maps size', 'map_size')
         self._make_check(3, sec, 'Autotracker debug log', 'usb2snes_debug')
+        self._make_colour(4, sec, 'Background colour', 'background')
+        self._make_colour(5, sec, 'Text colour', 'foreground')
 
         sec = ttk.LabelFrame(
             col, padding=PADDING,
@@ -81,6 +86,9 @@ class ConfigWindow(tk.Toplevel):
         self.usb2snes = self._make_option(
             1, sec, 'Tracking source', (), 'usb2snes_device')
         self._update_usb2snes()
+        self._make_multichoice(
+            2, sec, 'Autotrackers enabled by default', ('Items',),
+            ('autodefault_items',), 3)
 
         sec = ttk.LabelFrame(
             col, padding=PADDING, text='File information')
@@ -104,7 +112,7 @@ class ConfigWindow(tk.Toplevel):
         sec.grid(column=0, row=0, sticky=tk.E+tk.W)
         self.widgets.append(sec)
 
-        self._make_check(0, sec, 'Entrance randomiser', 'entrance_randomiser')
+        self._make_check(0, sec, 'Entrance Randomiser', 'entrance_randomiser')
         self._make_choice(
             1, sec, 'World State', ('Standard', 'Open', 'Inverted', 'Retro'),
             'world_state')
@@ -113,22 +121,30 @@ class ConfigWindow(tk.Toplevel):
             ('None', 'Overworld Glitches', 'Major Glitches'), 'glitch_mode')
         self._make_choice(
             3, sec, 'Item Placement', ('Basic', 'Advanced'), 'item_placement')
+        self._make_multichoice(
+            5, sec, 'Shuffled dungeon items',
+            ('Maps', 'Small Keys', 'Compasses', 'Big Keys'),
+            ('shuffle_map', 'shuffle_smallkey', 'shuffle_compass',
+             'shuffle_bigkey'),
+            2)
         self._make_choice(
             4, sec, 'Dungeon Items',
             ('Standard', 'Maps/Compasses', 'Maps/Compasses/Small Keys',
-             'Keysanity'),
-            'dungeon_items')
+             'Keysanity', 'Custom'),
+            'dungeon_items', linkwidget={'Custom': 'Shuffled dungeon items'})
+        if self.entries['dungeon_items'].get() != 'Custom':
+            self.hidden['Shuffled dungeon items'].grid_remove()
         self._make_choice(
-            5, sec, 'Goal',
+            6, sec, 'Goal',
             ('Defeat Ganon', 'Fast Ganon', 'All Dungeons',
              'Master Sword Pedestal', 'Triforce Hunt'),
             'goal')
         self._make_choice(
-            6, sec, 'Swords',
+            7, sec, 'Swords',
             ('Randomised', 'Assured', 'Vanilla', 'Swordless'),
             'swords')
-        self._make_check(7, sec, 'Enemiser', 'enemiser')
-        self._make_check(8, sec, 'Shop-sanity', 'shopsanity')
+        self._make_check(8, sec, 'Enemiser', 'enemiser')
+        self._make_check(9, sec, 'Shop-sanity', 'shopsanity')
 
         sec = ttk.LabelFrame(
             col, padding=PADDING, text='Display settings')
@@ -206,7 +222,7 @@ class ConfigWindow(tk.Toplevel):
 
     def _make_check(
             self, location: int, parent: ttk.LabelFrame, displaytext: str,
-            configoption: str) -> None:
+            configoption: str, halfwidth: bool = False) -> None:
         '''
         Make checkbox.
 
@@ -219,7 +235,8 @@ class ConfigWindow(tk.Toplevel):
 
         name = ttk.Label(parent, text=displaytext)
         name.grid(column=0, row=location, sticky=tk.W)
-        spacer = ttk.Label(parent, width=SPACERWIDTH)
+        spacer = ttk.Label(
+            parent, width=int(SPACERWIDTH / (2 if halfwidth else 1)))
         spacer.grid(column=1, row=location, sticky=tk.W)
         entryvar = tk.IntVar()
         entryvar.set(int(CONFIG[configoption]))
@@ -231,7 +248,8 @@ class ConfigWindow(tk.Toplevel):
 
     def _make_choice(
             self, location: int, parent: ttk.LabelFrame, displaytext: str,
-            choices: typing.Sequence[str], configoption: str) -> None:
+            choices: typing.Sequence[str], configoption: str,
+            linkwidget: dict = {}) -> None:
         '''
         Make menu selection.
 
@@ -241,6 +259,8 @@ class ConfigWindow(tk.Toplevel):
             displaytext: text to show in config window
             choices: available selections
             configoption: corresponding config option
+            halfwidth: only use half spacer width
+            linkwidget: link visibility of widget to option ({option: widget})
         '''
 
         name = ttk.Label(parent, text=displaytext)
@@ -252,6 +272,14 @@ class ConfigWindow(tk.Toplevel):
         entry = ttk.Combobox(
             parent, font=FONT, values=choices, textvariable=entryvar,
             width=max(len(s) for s in choices))
+        if linkwidget:
+            def _check_hidden(*args) -> True:
+                if entryvar.get() in linkwidget:
+                    self.hidden[linkwidget[entryvar.get()]].grid()
+                for lw in linkwidget:
+                    if entryvar.get() != lw:
+                        self.hidden[linkwidget[lw]].grid_remove()
+            entryvar.trace('w', _check_hidden)
         entry.configure(state='readonly')
         entry.grid(column=2, row=location, sticky=tk.W+tk.E)
         self.entries[configoption] = entryvar
@@ -260,8 +288,7 @@ class ConfigWindow(tk.Toplevel):
 
     def _make_option(
             self, location: int, parent: ttk.LabelFrame, displaytext: str,
-            options: set, configoption: str,
-            disable: bool = False) -> ttk.OptionMenu:
+            options: set, configoption: str) -> ttk.OptionMenu:
         '''
         Make option menu selection.
 
@@ -271,7 +298,6 @@ class ConfigWindow(tk.Toplevel):
             displaytext: text to show in config window
             options: list of available options
             configoption: corresponding config option
-            bool: True if menu should be disabled
         Returns:
             ttk.OptionMenu: created widget
         '''
@@ -284,13 +310,77 @@ class ConfigWindow(tk.Toplevel):
         entryvar.set(str(CONFIG[configoption]))
         entry = ttk.OptionMenu(parent, entryvar, *options)
         entry['menu'].configure(font=FONT)
-        if disable:
-            entry.configure(state='disabled')
         entry.grid(column=2, row=location, sticky=tk.W+tk.E)
         self.entries[configoption] = entryvar
         self.texts[configoption] = displaytext
         self.widgets.extend((name, spacer, entry))
         return entry
+
+    def _make_multichoice(
+            self, location: int, parent: ttk.LabelFrame, displaytext: str,
+            options: tuple, configoptions: tuple, columns: int):
+        '''
+        Make multiple choice frame.
+
+        Args:
+            location: row on GUI
+            parent: parent widgets
+            displaytext: text to show as frame header
+            options: available options
+            configoptions: configoptions corresponding to options
+            columns: number of columns to use
+        '''
+
+        outerframe = ttk.LabelFrame(parent, text=displaytext)
+        outerframe.grid(column=0, columnspan=3, row=location, sticky=tk.W+tk.E)
+        columnframes = []
+        for c in range(columns):
+            columnframes.append(ttk.Frame(outerframe))
+            columnframes[-1].grid(column=2 * c, row=0, sticky=tk.W)
+        columnspacers = []
+        for c in range(columns - 1):
+            columnspacers.append(ttk.Label(outerframe, width=SPACERWIDTH))
+            columnspacers[-1].grid(column=2 * c + 1, row=0, sticky=tk.W)
+        column = 0
+        row = 0
+        for idx, opt in enumerate(options):
+            self._make_check(row, columnframes[column], opt, configoptions[idx],
+                             halfwidth=True)
+            column += 1
+            if column >= columns:
+                row += 1
+                column = 0
+        self.hidden[displaytext] = outerframe
+        self.widgets.extend((outerframe, columnframes, columnspacers))
+
+    def _make_colour(
+            self, location: int, parent: ttk.LabelFrame, displaytext: str,
+            configoption: str) -> None:
+        '''
+        Make colour selection button.
+
+        Args:
+            location: row on GUI
+            parent: parent widgets
+            displaytext: text to show in config window
+            configoption: corresponding config option
+        '''
+
+        name = ttk.Label(parent, text=displaytext)
+        name.grid(column=0, row=location, sticky=tk.W)
+        spacer = ttk.Label(parent, width=SPACERWIDTH)
+        spacer.grid(column=1, row=location, sticky=tk.W)
+        entryvar = tk.StringVar()
+        entryvar.set(str(CONFIG[configoption]))
+        def _set_colour() -> None:
+            colour = tkc.askcolor(entryvar.get(), parent=self)
+            if colour[1] is not None:
+                entryvar.set(colour[1])
+        entry = ttk.Button(parent, command=_set_colour, textvariable=entryvar)
+        entry.grid(column=2, row=location, sticky=tk.W)
+        self.entries[configoption] = entryvar
+        self.texts[configoption] = displaytext
+        self.widgets.extend((name, spacer, entry))
 
     def _update_usb2snes(self) -> None:
         '''
@@ -322,6 +412,8 @@ class ConfigWindow(tk.Toplevel):
         Apply changed config.
         '''
 
+        if self._check_conflicts():
+            return
         for entry in self.boolentries:
             CONFIG.update(
                 entry, DEFAULT[entry][1](self.boolentries[entry].get()))
@@ -340,6 +432,35 @@ class ConfigWindow(tk.Toplevel):
             self.tracker.reapply()
             self.dungeondisplay.redraw()
             super().withdraw()
+
+    def _check_conflicts(self) -> bool:
+        '''
+        Check config for conflicts.
+
+        Returns:
+            bool: True if conflicts are present
+        '''
+
+        for conflict in CONFLICTS:
+            notpassed = True
+            for cond in conflict:
+                if cond in self.boolentries:
+                    notpassed &= (
+                        self.boolentries[cond].get() == conflict[cond][0])
+                else:
+                    notpassed &= self.entries[cond].get() == conflict[cond][0]
+            if notpassed:
+                message = [
+                    '- {0:s}: {1:s}'.format(
+                        conflict[cond][1], str(conflict[cond][0]))
+                    for cond in conflict]
+                tkmbox.showerror(
+                    'Conflict',
+                    'The following settings are conflicting:\n{0:s}'.format(
+                        '\n'.join(message)),
+                    parent=self)
+                return True
+        return False
 
 
 def start(tracker) -> None:

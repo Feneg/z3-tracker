@@ -143,7 +143,7 @@ LOCATIONS = {
             'North Dark World': [('rabbitbarrier', None)],
             'Graveyard Cave Entrance (E)': [('and', [
                 ('nosettings', 'inverted'), ('item', 'mirror')])],
-            "King's Tomb Entrance (E)": [('and', [
+            "King's Tomb Exterior": [('and', [
                 ('nosettings', 'inverted'), ('item', 'mirror')])]}
     },
     'Dark Chapel Entrance (I)': {
